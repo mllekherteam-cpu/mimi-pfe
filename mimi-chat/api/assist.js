@@ -1,7 +1,7 @@
 // One-shot helper used by the Google Docs sidebar (Apps Script) and the web editor.
 // POST {mode, text, instruction, context, model, web} -> {result, notes}
 import Anthropic from '@anthropic-ai/sdk';
-import { checkAuth, getSpent, addSpent, BUDGET, readJson } from '../lib/store.js';
+import { checkAuth, getSpent, addSpent, getBudget, readJson } from '../lib/store.js';
 import { SYSTEM } from '../lib/system.js';
 
 export const config = { maxDuration: 120 };
@@ -10,6 +10,7 @@ const MODELS = {
   haiku: { id: 'claude-haiku-5-5', in: 0.1, out: 0.5, search: 'web_search_20250305' },
   sonnet: { id: 'claude-sonnet-5-5', in: 2, out: 10, search: 'web_search_20260209' },
   opus: { id: 'claude-opus-5-5', in: 4, out: 20, search: 'web_search_20260209' },
+  fable: { id: 'claude-fable-5-2', in: 8, out: 40, search: 'web_search_20260209' },
 };
 
 const MODES = {
@@ -29,10 +30,10 @@ export default async function handler(req, res) {
   if (!checkAuth(req, res)) return;
   if (req.method !== 'POST') return res.status(405).end();
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'Clé manquante sur le serveur.' });
-  if ((await getSpent()) >= BUDGET) return res.status(402).json({ error: 'L’assistante fait une petite pause. Préviens Omar 🤍' });
+  if ((await getSpent()) >= (await getBudget())) return res.status(402).json({ error: 'L’assistante fait une petite pause. Préviens Omar 🤍', code: 'empty' });
 
   const b = await readJson(req);
-  const m = MODELS[b.model] || MODELS.sonnet;
+  const m = MODELS[b.model] || MODELS.opus;
   const task = [MODES[b.mode], b.instruction].filter(Boolean).join('\n\nConsigne de Mimi : ') || 'Améliore ce passage.';
   const web = b.web || b.mode === 'source' || b.mode === 'check';
 

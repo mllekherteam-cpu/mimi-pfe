@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { checkAuth, getSpent, addSpent, BUDGET, readJson } from '../lib/store.js';
+import { checkAuth, getSpent, addSpent, getBudget, readJson } from '../lib/store.js';
 import { SYSTEM, TOOLS_NOTE } from '../lib/system.js';
 import { hasRepo, clean, badPath, listAll, readFile, writeFile } from '../lib/github.js';
 
@@ -9,6 +9,7 @@ const MODELS = {
   haiku: { id: 'claude-haiku-5-5', in: 0.10, out: 0.50, search: 'web_search_20250305' },
   sonnet: { id: 'claude-sonnet-5-5', in: 2, out: 10, search: 'web_search_20260209', fallback: true },
   opus: { id: 'claude-opus-5-5', in: 4, out: 20, search: 'web_search_20260209', fallback: true },
+  fable: { id: 'claude-fable-5-2', in: 8, out: 40, search: 'web_search_20260209', fallback: true },
 };
 const EFFORTS = ['low', 'medium', 'high'];
 const WORK_DIR = 'Travail_Mimi/';
@@ -45,6 +46,7 @@ const PROJECT_TOOLS = [
 function priceFor(modelId) {
   if (/haiku/.test(modelId)) return MODELS.haiku;
   if (/sonnet/.test(modelId)) return MODELS.sonnet;
+  if (/fable|mythos/.test(modelId)) return MODELS.fable;
   return MODELS.opus;
 }
 function costOf(msg) {
@@ -112,27 +114,46 @@ async function runTool(name, input, send) {
   }
 }
 
+// The project's goal file, always in the assistant's head (cached 10 min per server instance).
+let goalCache = { at: 0, text: '' };
+async function projectGoal() {
+  if (!hasRepo) return '';
+  if (Date.now() - goalCache.at < 600000) return goalCache.text;
+  try {
+    const f = await readFile('00_GOAL_PFE.md');
+    goalCache = { at: Date.now(), text: Buffer.from(f.content, 'base64').toString('utf8').slice(0, 40000) };
+  } catch { goalCache = { at: Date.now(), text: '' }; }
+  return goalCache.text;
+}
+
 export default async function handler(req, res) {
   if (!checkAuth(req, res)) return;
   if (req.method !== 'POST') return res.status(405).end();
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'Le serveur n’a pas encore sa clé. Préviens Omar 🤍' });
 
   const body = await readJson(req);
-  const m = MODELS[body.model] || MODELS.sonnet;
+  const m = MODELS[body.model] || MODELS.opus;
   const effort = EFFORTS.includes(body.effort) ? body.effort : 'low';
 
   const spent = await getSpent();
-  if (spent >= BUDGET) return res.status(402).json({ error: 'L’assistante fait une petite pause. Préviens Omar 🤍' });
+  const BUDGET = await getBudget();
+  if (spent >= BUDGET) return res.status(402).json({ error: 'L’assistante fait une petite pause. Préviens Omar 🤍', code: 'empty' });
 
   res.writeHead(200, { 'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no' });
   const send = (o) => res.write(JSON.stringify(o) + '\n');
 
   const client = new Anthropic();
-  const system = SYSTEM + (hasRepo ? TOOLS_NOTE : '') + (body.projectNotes ? `\n\n<notes_de_mimi>\n${body.projectNotes}\n</notes_de_mimi>` : '');
+  const goal = await projectGoal();
+  const system = SYSTEM + (hasRepo ? TOOLS_NOTE : '') + (goal ? `\n\n<fichier_objectifs_du_projet chemin="00_GOAL_PFE.md">\n${goal}\n</fichier_objectifs_du_projet>` : '') + (body.projectNotes ? `\n\n<notes_de_mimi>\n${body.projectNotes}\n</notes_de_mimi>` : '');
   let messages = toApiMessages(body.messages || []);
+  // about one reply in ten ends with a soft, short sign-off
+  if (Math.random() < 0.1 && messages.length) {
+    messages.push({ role: 'system', content: 'Pour cette réponse seulement : termine, sur une dernière ligne à part, par une formule courte, douce et sobre adressée à Mimi, par exemple « Avec tout l’amour 🤍 », « Courage, tu y es presque 🤍 » ou « Fière de toi 🤍 ». Une seule, sans rien ajouter.' });
+  }
   const tools = [
     ...(hasRepo ? PROJECT_TOOLS : []),
-    ...(body.web ? [{ type: m.search, name: 'web_search', max_uses: 5 }] : []),
+    ...(body.web !== false ? [{ type: m.search, name: 'web_search', max_uses: 5 }] : []),
+    ...(body.web !== false && m.search === 'web_search_20260209' ? [{ type: 'web_fetch_20260209', name: 'web_fetch', max_uses: 5 }] : []),
   ];
 
   let total = 0;
@@ -142,7 +163,7 @@ export default async function handler(req, res) {
     for (let round = 0; round < 10; round++) {
       const params = {
         model: m.id,
-        max_tokens: 32000,
+        max_tokens: m === MODELS.fable ? 64000 : 32000,
         system,
         messages,
         output_config: { effort },

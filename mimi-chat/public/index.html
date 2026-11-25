@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+<link rel="stylesheet" href="/notes.css">
 <style>
 :root{
   --bg:#fcf7f4; --side:#f6ece8; --panel:#fff; --ink:#2e2427; --mute:#8a7a7e; --line:#efe0dc;
@@ -193,6 +194,38 @@ select.pill:hover{background-color:#fbefed}
 #docs.previewing #filePrev{display:flex}
 #docs.viewing #docList,#docs.viewing #dtabs{display:none}
 #docs{position:relative;z-index:3}
+/* video gift */
+#giftNote{position:fixed;right:20px;bottom:110px;z-index:85;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 40px rgba(184,92,116,.22);padding:14px 16px;width:300px;display:flex;gap:12px;align-items:center;animation:slidein .8s cubic-bezier(.2,1.3,.4,1)}
+@keyframes slidein{from{transform:translateX(120%);opacity:0}}
+#giftNote .gi{font-size:30px;animation:sway 2.4s ease-in-out infinite;transform-origin:50% 90%}
+#giftNote b{display:block;font-size:14.5px}
+#giftNote small{color:var(--mute);font-size:12.5px}
+#giftNote button{margin-top:6px;background:var(--accent);color:#fff;border-radius:9px;padding:5px 12px;font-size:13px}
+#tune{display:none;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 9px}
+#tune.on{display:flex}
+#tune .tt{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
+#tune .tt b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+#tune .tt small{color:var(--mute)}
+#tune button{width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;background:var(--accent-2);color:var(--accent);flex:none}
+#tune button:hover{background:#f3d5dc}
+#tune .eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px;margin-left:4px;vertical-align:-1px}
+#tune .eq i{width:2.5px;background:var(--accent);border-radius:2px;height:4px}
+#tune.playing .eq i{animation:eq .9s ease-in-out infinite}
+#tune.playing .eq i:nth-child(2){animation-delay:.2s}#tune.playing .eq i:nth-child(3){animation-delay:.4s}
+@keyframes eq{50%{height:12px}}
+#vbox{position:fixed;left:20px;bottom:128px;z-index:84;width:240px;background:#000;border-radius:16px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.25);display:none}
+#vbox.show{display:block;animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
+#vbox video{width:100%;display:block;max-height:60vh;background:#000}
+#vbox .vx{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}
+.floatheart{position:fixed;bottom:-40px;z-index:70;pointer-events:none;opacity:0;animation:floatup linear forwards;will-change:transform,opacity}
+@keyframes floatup{10%{opacity:.9}80%{opacity:.7}to{transform:translate(var(--x),-108vh) rotate(18deg);opacity:0}}
+body.inlove .emo img{animation:beat 1.1s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+body.inlove #fawn{animation:fawnsway 3.5s ease-in-out infinite;transform-origin:50% 100%;opacity:.24}
+body.inlove .fawn-hero{animation:fawnsway 3.5s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes fawnsway{50%{transform:rotate(-3deg) translateY(-3px)}}
+body.inlove #helloName{color:var(--accent)}
+body.inlove{background-color:#fdf1f3}
 #flowerBtn{width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:22px;transform-origin:50% 90%}
 #flowerBtn img{width:28px;height:28px;pointer-events:none}
 #flowerBtn:hover{background:var(--accent-2)}
@@ -204,8 +237,13 @@ select.pill:hover{background-color:#fbefed}
 @keyframes pop{from{transform:scale(.6) translateY(30px);opacity:0}}
 .giftcard img{width:120px;height:120px}
 .giftcard .from{font-family:var(--font);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:6px 0 8px}
-.giftcard .q{font-family:"Great Vibes",cursive;font-size:30px;line-height:1.25;color:#7a3b4c;margin:0 0 14px;min-height:76px;display:flex;align-items:center;justify-content:center}
-.giftcard button{color:var(--mute);font-size:13px;padding:6px 12px;border-radius:9px}
+.giftcard .q{font-family:"Great Vibes",cursive;font-size:30px;line-height:1.25;color:#7a3b4c;margin:0 0 4px;min-height:76px;display:flex;align-items:center;justify-content:center}
+.greply{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.greply button{border-radius:999px;padding:8px 14px;font-size:13.5px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.greply .g1{background:var(--accent);border-color:var(--accent);color:#fff}
+.greply .g1:hover{background:#a64f66}.greply .g2:hover{background:var(--accent-2)}
+.greply .sent{color:var(--accent);font-family:"Great Vibes",cursive;font-size:24px;animation:pop .5s}
+.giftcard .gx{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;color:var(--mute);font-size:14px;display:flex;align-items:center;justify-content:center}
 .giftcard button:hover{background:var(--accent-2)}
 .fall{position:fixed;top:-60px;z-index:1;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translate(var(--x),110vh) rotate(var(--r))}}
@@ -268,6 +306,7 @@ body.panel #fawn{display:none}
   </div>
   <div id="convList"></div>
   <div class="side-foot">
+    <div id="tune"><button id="tPlay" title="Écouter">▶</button><div class="tt"><b>Cua cuaaa 🫂❤️</b><small id="tState">notre chanson</small><span class="eq"><i></i><i></i><i></i></span></div><button id="tVid" title="Voir la vidéo">📺</button></div>
     <div class="foot-btns">
       <button class="ghost" id="openDocs"><svg class="icon" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Documents</button>
       <button class="ghost" id="openSettings"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Réglages</button>
@@ -308,9 +347,9 @@ body.panel #fawn{display:none}
           <option value="high">Approfondi</option>
         </select>
         <select class="pill" id="model" title="Modèle">
-          <option value="haiku">Haiku · économique</option>
-          <option value="sonnet">Sonnet · équilibré</option>
-          <option value="opus">Opus · le plus fort</option>
+          <option value="sonnet">Sonnet · petites tâches</option>
+          <option value="opus">Opus · au quotidien</option>
+          <option value="fable">Fable · grands travaux</option>
         </select>
         <button id="send" title="Envoyer" disabled><svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
       </div>
@@ -344,6 +383,7 @@ body.panel #fawn{display:none}
 </aside>
 
 <div class="toast" id="toast"></div>
+<div id="vbox"><video id="vid" src="/media/cuacua-9c3cfb7b1357.mp4" preload="none" playsinline controls></video><button class="vx" id="vClose" title="Fermer">✕</button></div>
 <svg id="fawnDef" width="0" height="0" style="position:absolute">
   <symbol id="fawnSym" viewBox="0 0 200 190">
     <g fill="#c98a76">
@@ -406,7 +446,9 @@ let index = LS.get('index', []);           // [{id,title,updated,model,pinned}]
 let conv = null;                           // current conversation
 let pending = [];                          // files waiting to be sent
 let busy = null;                           // AbortController while streaming
-const settings = Object.assign({ model: 'sonnet', effort: 'low', web: false, notes: '', code: '' }, LS.get('settings', {}));
+const settings = Object.assign({ model: 'opus', effort: 'low', web: true, notes: '', code: '' }, LS.get('settings', {}));
+if (!settings.v2) { settings.model = 'opus'; settings.web = true; settings.v2 = 1; LS.set('settings', settings); }
+if (!['sonnet', 'opus', 'fable'].includes(settings.model)) settings.model = 'opus';
 
 async function api(path, opts = {}) {
   const r = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json', 'x-access-code': settings.code || '', ...(opts.headers || {}) } });
@@ -544,7 +586,7 @@ function md(text) {
   }
   return div.innerHTML;
 }
-const MODEL_NAME = { haiku: 'Haiku', sonnet: 'Sonnet', opus: 'Opus' };
+const MODEL_NAME = { haiku: 'Haiku', sonnet: 'Sonnet', opus: 'Opus', fable: 'Fable' };
 function fileChip(f) {
   const img = f.type?.startsWith('image/') && f.data ? `<img src="data:${f.type};base64,${f.data}">` : ICON.file;
   return `<span class="chip">${img}<span>${esc(f.name)}</span></span>`;
@@ -700,7 +742,15 @@ async function run() {
     const r = await api('/api/chat', { method: 'POST', signal: busy.signal, body: JSON.stringify({
       model, effort: $('#effort').value, web: settings.web, projectNotes: settings.notes,
       messages: c.messages.slice(0, -1).map((m) => ({ role: m.role, text: m.text, files: m.files })) }) });
-    if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || 'Erreur ' + r.status); }
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      if (j.code === 'empty') {
+        node.remove(); c.messages.pop(); busy = null; updateSend(); clearInterval(waitTimer);
+        if (await askRecharge()) return run();
+        return;
+      }
+      throw new Error(j.error || 'Erreur ' + r.status);
+    }
     const reader = r.body.getReader(); const dec = new TextDecoder(); let buf = '';
     for (;;) {
       const { value, done } = await reader.read(); if (done) break;
@@ -881,7 +931,7 @@ $('#openSettings').onclick = () => {
     <label>Notes sur mon projet (l’assistante les lit à chaque message : données de stage, consignes de l’encadrante, ce qui est déjà fait…)</label>
     <textarea id="sNotes" placeholder="Ex. : débit moyen de la STEP 2025 = … m³/j ; l’encadrante veut… ; chapitre 2 terminé…">${esc(settings.notes)}</textarea>
     <label>Code d’accès</label><input id="sCode" type="password" value="${esc(settings.code)}">
-    <p style="margin-top:12px">Haiku répond vite pour les petites questions, Sonnet est le meilleur au quotidien, Opus pour les parties difficiles.</p>
+    <p style="margin-top:12px">Sonnet pour les petites questions, Opus au quotidien, Fable pour les grands travaux (relecture complète, parties difficiles).</p>
     <div class="row"><button class="ghost" data-cancel>Annuler</button><button class="solid" data-ok>Enregistrer</button></div>`,
   (bg) => { settings.notes = bg.querySelector('#sNotes').value; settings.code = bg.querySelector('#sCode').value; LS.set('settings', settings); toast('Enregistré'); boot(); });
 };
@@ -972,31 +1022,126 @@ $('#cvAsk').onclick = () => {
   };
 })();
 
+// ---------- a video arrives after a while of work ----------
+const GIFT_AFTER = 20 * 60; // seconds of active work
+const vid = $('#vid');
+function showTune() { $('#tune').classList.add('on'); }
+function receiveGift() {
+  LS.set('giftGot', true); showTune();
+  if ($('#giftNote')) return;
+  const n = document.createElement('div'); n.id = 'giftNote';
+  n.innerHTML = `<div class="gi">🎁</div><div><b>Tu as reçu une vidéo</b><small>Quelqu’un pense à toi pendant que tu travailles.</small><br><button>Ouvrir 💌</button></div>`;
+  document.body.appendChild(n);
+  n.querySelector('button').onclick = () => { n.remove(); openVideo(); };
+  setTimeout(() => n.remove(), 60000);
+}
+function paintTune() {
+  const playing = !vid.paused;
+  $('#tune').classList.toggle('playing', playing);
+  $('#tPlay').textContent = playing ? '❚❚' : '▶';
+  $('#tState').textContent = playing ? ($('#vbox').classList.contains('show') ? 'en vidéo' : 'en musique') : 'notre chanson';
+}
+function openVideo() { $('#vbox').classList.add('show'); vid.play().catch(() => {}); }
+$('#tPlay').onclick = () => { if (vid.paused) vid.play().catch(() => {}); else vid.pause(); };
+$('#tVid').onclick = () => $('#vbox').classList.contains('show') ? $('#vbox').classList.remove('show') : openVideo();
+$('#vClose').onclick = () => $('#vbox').classList.remove('show'); // keeps playing as music
+['play', 'pause', 'ended'].forEach((e) => vid.addEventListener(e, paintTune));
+if (LS.get('giftGot', false)) showTune();
+else {
+  let worked = LS.get('worked', 0), lastAct = Date.now();
+  ['keydown', 'click', 'scroll'].forEach((e) => addEventListener(e, () => { lastAct = Date.now(); }, { passive: true, capture: true }));
+  const tick = setInterval(() => {
+    if (document.visibilityState === 'visible' && Date.now() - lastAct < 3 * 60000) { worked += 15; LS.set('worked', worked); }
+    if (worked >= GIFT_AFTER) { clearInterval(tick); receiveGift(); }
+  }, 15000);
+}
+if (location.hash === '#cadeau') receiveGift();
+
+// ---------- out of credit: a gentle "do you need more?" ----------
+const ASK_MORE = ['Tu en veux encore ?', 'Tu as besoin de plus ?', 'Tu en veux encore, babe ?', 'On recharge pour toi ?'];
+function askRecharge() {
+  return new Promise((resolve) => {
+    const q = ASK_MORE[Math.floor(Math.random() * ASK_MORE.length)];
+    const bg = modal(`<div style="text-align:center"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f97a/512.webp" style="width:72px;height:72px" alt="🥺">
+      <h2 style="margin-top:6px">Tu as tout utilisé…</h2>
+      <p style="font-size:15px;line-height:1.55">Tu as tellement travaillé que ta réserve est vide.<br><b>${q}</b></p>
+      <div class="row" style="justify-content:center"><button class="ghost" data-cancel>Plus tard</button><button class="solid" data-ok>Oui, j’en veux plus ❤️</button></div></div>`,
+    () => {
+      api('/api/recharge', { method: 'POST' }).then((r) => r.json()).then(() => {
+        modal(`<div style="text-align:center"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f496/512.webp" style="width:72px;height:72px" alt="💖">
+          <h2 style="margin-top:6px">C’est rechargé ✨</h2>
+          <p style="font-size:15px;line-height:1.55">Tu as de nouveau tout ce qu’il te faut, comme au premier jour.<br>Je reprends ton message.</p>
+          <div class="row" style="justify-content:center"><button class="solid" data-ok>Merci ❤️</button></div></div>`, () => resolve(true));
+      }).catch(() => { toast('Petit souci, réessaie'); resolve(false); });
+    });
+    bg.querySelector('[data-cancel]').addEventListener('click', () => resolve(false));
+  });
+}
+
+// ---------- while our song plays: hearts float up softly (light: ~12 at a time, transform-only) ----------
+let heartTimer = 0;
+function heartsOn(on) {
+  document.body.classList.toggle('inlove', on);
+  clearInterval(heartTimer);
+  if (!on || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const H = ['❤️', '💕', '💗', '💖', '🤍', '💞'];
+  heartTimer = setInterval(() => {
+    if (document.hidden || document.querySelectorAll('.floatheart').length > 12) return;
+    const h = document.createElement('span'); h.className = 'floatheart';
+    h.textContent = H[Math.floor(Math.random() * H.length)];
+    h.style.left = (4 + Math.random() * 92) + 'vw';
+    h.style.fontSize = (14 + Math.random() * 20) + 'px';
+    h.style.animationDuration = (7 + Math.random() * 5) + 's';
+    h.style.setProperty('--x', (Math.random() * 120 - 60) + 'px');
+    document.body.appendChild(h);
+    h.addEventListener('animationend', () => h.remove());
+  }, 750);
+}
+vid.addEventListener('play', () => heartsOn(true));
+vid.addEventListener('pause', () => heartsOn(false));
+vid.addEventListener('ended', () => heartsOn(false));
+
+// ---------- Fable: for the big moments ----------
+let opusShown = false;
+$('#model').addEventListener('change', () => {
+  if ($('#model').value !== 'fable' || opusShown) return; opusShown = true;
+  modal(`<div style="text-align:center"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp" style="width:64px;height:64px" alt="✨">
+    <h2 style="margin-top:6px">Fable, pour les grands moments</h2>
+    <p style="font-size:14.5px;line-height:1.55">C’est le plus brillant, et le plus précieux. Garde-le pour ce qui compte vraiment : la relecture finale, une partie difficile, la veille de ta soutenance.</p>
+    <p style="font-size:14.5px;line-height:1.55">Pour tout le reste, <b>Opus</b> est là, juste à côté de toi.</p>
+    <div class="row" style="justify-content:center"><button class="ghost" data-cancel id="opusBack">Revenir à Opus</button><button class="solid" data-ok>C’est un grand moment ✨</button></div></div>`, () => {});
+  $('#opusBack').addEventListener('click', () => { $('#model').value = 'opus'; settings.model = 'opus'; LS.set('settings', settings); });
+});
+
 // ---------- someone sent you flowers ----------
+// [what the card says, what she can answer]
 const QUOTES = [
-  'Someone’s heart skipped a beat at your name today.',
-  'Someone is thinking about you right now.',
-  'Somewhere, someone is very proud of you.',
-  'Someone believes in you more than you know.',
-  'Your name made someone smile today.',
-  'Someone hopes today is gentle with you.',
-  'Someone thinks the world is softer because you’re in it.',
-  'Every page you write, someone is cheering for you.',
-  'Someone saved their sweetest thoughts for you.',
-  'Someone wishes they could bring you coffee right now.',
-  'You are someone’s favourite thought.',
-  'Someone thinks you’re doing amazing, even on the hard days.',
+  ['Someone’s heart skipped a beat at your name today.', 'aww, that’s sweet 🙈'],
+  ['Someone is thinking about you right now.', 'thinking of you too 🤍'],
+  ['Somewhere, someone is very proud of you.', 'that means a lot to me'],
+  ['Someone believes in you more than you know.', 'i believe in you too'],
+  ['Your name made someone smile today.', 'you made me smile too 😊'],
+  ['Someone hopes today is gentle with you.', 'i hope yours is too 🤍'],
+  ['Someone thinks the world is softer because you’re in it.', 'that’s so kind… same to you'],
+  ['Every page you write, someone is cheering for you.', 'i can feel it, thank you 🥹'],
+  ['Someone saved their sweetest thoughts for you.', 'keep some for yourself too 🤍'],
+  ['Someone wishes they could bring you coffee right now.', 'i’d love that ☕'],
+  ['You are someone’s favourite thought.', 'you cross my mind too 🙈'],
+  ['Someone thinks you’re doing amazing, even on the hard days.', 'you too, really'],
 ];
-const BLOOMS = ['1f337', '1f339', '1f338', '1f33a', '1f33c', '1f490'];
+const BLOOMS = ['1f337', '1f339', '1f338', '1f33c', '1f490'];
 let lastQ = -1;
 function sendFlowers() {
   if ($('#gift')) return;
   let i; do { i = Math.floor(Math.random() * QUOTES.length); } while (i === lastQ); lastQ = i;
+  const [quote, reply] = QUOTES[i];
   const g = document.createElement('div'); g.id = 'gift';
-  g.innerHTML = `<div class="giftcard"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/${BLOOMS[Math.floor(Math.random() * BLOOMS.length)]}/512.webp" alt="💐">
-    <div class="from">Someone just sent you flowers</div><div class="q">${QUOTES[i]}</div><button>thank you ❤️</button></div>`;
+  g.innerHTML = `<div class="giftcard"><button class="gx" title="Fermer">✕</button>
+    <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/${BLOOMS[Math.floor(Math.random() * BLOOMS.length)]}/512.webp" alt="" onerror="this.outerHTML='<div style=&quot;font-size:96px;line-height:120px&quot;>💐</div>'">
+    <div class="from">Someone just sent you flowers</div><div class="q">${quote}</div>
+    <div class="greply"><button class="g2" data-r="thank you sm">thank you sm</button><button class="g1" data-r="${reply}">${reply}</button></div></div>`;
   document.body.appendChild(g);
-  const E = ['🌷', '🌸', '🌹', '🌺', '💮', '🌼', '❤️'];
+  const E = ['🌷', '🌸', '🌹', '🌼', '💮', '❤️'];
   for (let k = 0; k < 34; k++) {
     const f = document.createElement('span'); f.className = 'fall'; f.textContent = E[Math.floor(Math.random() * E.length)];
     f.style.left = Math.random() * 100 + 'vw'; f.style.fontSize = 16 + Math.random() * 22 + 'px';
@@ -1005,7 +1150,15 @@ function sendFlowers() {
     g.appendChild(f);
   }
   const close = () => { g.style.transition = 'opacity .5s'; g.style.opacity = 0; setTimeout(() => g.remove(), 500); };
-  g.onclick = (e) => { if (e.target === g || e.target.tagName === 'BUTTON') close(); };
+  g.onclick = (e) => {
+    const r = e.target.closest('[data-r]');
+    if (r) {
+      api('/api/react', { method: 'POST', body: JSON.stringify({ quote, reply: r.dataset.r }) }).catch(() => {});
+      r.closest('.greply').innerHTML = '<div class="sent">envoyé 💌</div>';
+      setTimeout(close, 1100); return;
+    }
+    if (e.target === g || e.target.closest('.gx')) close();
+  };
 }
 $('#flowerBtn').onclick = sendFlowers;
 // the little bouquet sways every so often, as if it just arrived
@@ -1048,5 +1201,6 @@ async function boot() {
 }
 renderList(); renderChat(); autosize(); boot();
 </script>
+<script src="/notes.js"></script>
 </body>
 </html>

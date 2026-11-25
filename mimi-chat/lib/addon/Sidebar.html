@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  :root{--bg:#fcf7f4;--ink:#2e2427;--mute:#8a7a7e;--line:#efe0dc;--accent:#b85c74;--soft:#f8e6ea}
+  *{box-sizing:border-box}
+  body{margin:0;padding:12px;font:13px/1.45 "Google Sans",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  h1{font-family:Georgia,serif;font-weight:400;font-size:20px;margin:2px 0 2px;display:flex;align-items:center;gap:8px}
+  h1 img{width:28px;height:28px}
+  .sub{color:var(--mute);font-size:12px;margin-bottom:10px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px 0}
+  .card h2{font-size:13px;margin:0 0 8px;font-weight:600}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 8px;cursor:pointer;color:var(--ink);text-align:left}
+  button:hover{border-color:#e3b3bf;background:#fffafb}
+  button.main{background:var(--accent);color:#fff;border-color:var(--accent);text-align:center}
+  button.main:hover{background:#a64f66}
+  button:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .row button{flex:1;text-align:center}
+  textarea,input,select{width:100%;font:inherit;border:1px solid var(--line);border-radius:9px;padding:7px 8px;background:#fff;color:var(--ink);outline:0}
+  textarea:focus,input:focus{border-color:var(--accent)}
+  textarea{min-height:110px;resize:vertical;font-family:"Times New Roman",serif;font-size:14px}
+  .quote{font-family:"Times New Roman",serif;font-size:13px;background:#fdf3f5;border-left:3px solid #e8a3b4;padding:6px 8px;border-radius:6px;max-height:90px;overflow:auto;white-space:pre-wrap}
+  .notes{font-size:12px;color:#5d4b50;background:#fbf1e9;border-radius:8px;padding:6px 8px;margin-top:6px;white-space:pre-wrap}
+  .err{color:#b4432f;font-size:12px;margin-top:6px}
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px;margin-bottom:8px}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .sw{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .item{border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:8px;background:#fff}
+  .tag{font-size:11px;border-radius:6px;padding:1px 6px;display:inline-block;margin-bottom:4px}
+  .wait{color:var(--mute);font-size:12px;display:flex;gap:6px;align-items:center;margin-top:8px}
+  .dots i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent);margin-right:2px;animation:b 1.2s infinite}
+  .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+  @keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+  .hide{display:none}
+  a{color:var(--accent)}
+  .foot{font-size:11px;color:#c58a98;text-align:center;margin-top:14px;font-family:Georgia,serif;font-style:italic}
+</style>
+</head>
+<body>
+  <h1><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f970/512.webp" alt="">Mimi ✨</h1>
+  <div class="sub">Sélectionne un passage, choisis, puis « Remplacer ». Rien ne change sans ton accord.</div>
+
+  <select id="model" title="Modèle">
+    <option value="opus">Opus · au quotidien</option>
+    <option value="sonnet">Sonnet · petites tâches</option>
+    <option value="fable">Fable · grands travaux</option>
+  </select>
+
+  <div class="card">
+    <h2>✍️ Ma sélection</h2>
+    <div class="grid">
+      <button data-mode="improve">✨ Améliorer</button>
+      <button data-mode="fix">✔️ Corriger fautes</button>
+      <button data-mode="shorten">✂️ Raccourcir</button>
+      <button data-mode="expand">➕ Développer</button>
+      <button data-mode="rephrase">🔁 Reformuler</button>
+      <button data-mode="source">📚 Ajouter sources</button>
+      <button data-mode="check">🔬 Vérifier</button>
+      <button data-mode="explain">💬 M’expliquer</button>
+      <button data-mode="en">🇬🇧 Anglais</button>
+      <button data-mode="ar">🇲🇦 Arabe</button>
+    </div>
+    <div class="row"><input id="instr" placeholder="Ou dis ce que tu veux… (ex. : plus formel, ajoute un exemple)"></div>
+    <div class="row"><button class="main" id="custom">Faire sur ma sélection</button></div>
+    <div id="selOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>🖍️ Mes surlignages</h2>
+    <div class="legend">
+      <span><i class="sw" style="background:#fff475"></i>Jaune : améliorer</span>
+      <span><i class="sw" style="background:#f4a7b9"></i>Rose/rouge : vérifier</span>
+      <span><i class="sw" style="background:#b7e1a1"></i>Vert : développer</span>
+      <span><i class="sw" style="background:#a4c2f4"></i>Bleu : ajouter sources</span>
+    </div>
+    <button class="main" id="scan" style="width:100%">Traiter mes surlignages</button>
+    <div id="hlOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>💬 Mes commentaires</h2>
+    <div class="sub" style="margin:0 0 8px">Mets un commentaire sur un passage (« trop long », « ajoute un chiffre »…) et je m’en occupe.</div>
+    <button class="main" id="cm" style="width:100%">Traiter mes commentaires</button>
+    <div id="cmOut"></div>
+  </div>
+
+  <div class="row"><button id="site">💬 Ouvrir la conversation complète</button></div>
+  <div class="foot">Made by Omar with love ❤️</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const run = (fn, ...args) => new Promise((ok, ko) => google.script.run.withSuccessHandler(ok).withFailureHandler(ko)[fn](...args));
+const model = () => $('#model').value;
+const WAIT = ['Je lis ton passage…', 'Je réfléchis pour toi…', 'Presque prêt…'];
+function waiting(el, msg) { el.innerHTML = `<div class="wait"><span class="dots"><i></i><i></i><i></i></span><span>${msg || WAIT[Math.floor(Math.random() * WAIT.length)]}</span></div>`; }
+const KIND = { yellow: ['#fff475', 'Améliorer'], red: ['#f4a7b9', 'Vérifier'], green: ['#b7e1a1', 'Développer'], blue: ['#a4c2f4', 'Sources'] };
+
+// one proposal block, reused everywhere
+function proposal(box, rangeId, r, after) {
+  const id = 'p' + Math.random().toString(36).slice(2, 8);
+  box.insertAdjacentHTML('beforeend', `<div id="${id}">
+    ${r.result ? `<textarea>${esc(r.result)}</textarea>` : ''}
+    ${r.notes ? `<div class="notes">${esc(r.notes)}</div>` : ''}
+    <div class="row">${r.result ? `<button class="main" data-a="replace">Remplacer</button><button data-a="after">Insérer dessous</button>` : ''}<button data-a="skip">${r.result ? 'Ignorer' : 'OK'}</button></div>
+  </div>`);
+  const el = document.getElementById(id);
+  el.onclick = async (e) => {
+    const a = e.target.dataset.a; if (!a) return;
+    el.querySelectorAll('button').forEach((b) => b.disabled = true);
+    try {
+      if (a === 'skip') { await run('forgetRange', rangeId); }
+      else { await run('applyToRange', rangeId, el.querySelector('textarea').value, a === 'after' ? 'after' : 'replace'); }
+      if (after) await after(a);
+      el.innerHTML = `<div class="notes">${a === 'skip' ? 'Ignoré.' : 'Fait ✓'}</div>`;
+    } catch (err) { el.insertAdjacentHTML('beforeend', `<div class="err">${esc(err.message)}</div>`); }
+  };
+}
+
+async function onSelection(mode, instruction) {
+  const out = $('#selOut'); waiting(out, 'Je prends ta sélection…');
+  try {
+    const s = await run('grabSelection');
+    if (s.error) { out.innerHTML = `<div class="err">${esc(s.error)}</div>`; return; }
+    out.innerHTML = `<div class="quote" style="margin-top:8px">${esc(s.text.slice(0, 400))}${s.text.length > 400 ? '…' : ''}</div><div class="res"></div>`;
+    const res = out.querySelector('.res'); waiting(res);
+    const r = await run('processSelection', s.id, mode, instruction, model());
+    res.innerHTML = ''; proposal(res, s.id, r);
+  } catch (err) { out.innerHTML = `<div class="err">${esc(err.message)}</div>`; }
+}
+document.querySelectorAll('[data-mode]').forEach((b) => b.onclick = () => onSelection(b.dataset.mode, ''));
+$('#custom').onclick = () => { const t = $('#instr').value.trim(); onSelection(t ? '' : 'improve', t); };
+$('#instr').onkeydown = (e) => { if (e.key === 'Enter') $('#custom').click(); };
+
+$('#scan').onclick = async () => {
+  const out = $('#hlOut'); waiting(out, 'Je cherche tes surlignages…');
+  try {
+    const items = await run('scanHighlights');
+    if (!items.length) { out.innerHTML = '<div class="notes" style="margin-top:8px">Aucun surlignage trouvé. Surligne un passage avec l’outil « couleur de surlignage » de Google Docs.</div>'; return; }
+    out.innerHTML = `<div class="sub" style="margin:8px 0 0">${items.length} passage(s) trouvé(s). Je les traite un par un.</div>`;
+    for (const h of items) {
+      const k = KIND[h.kind];
+      out.insertAdjacentHTML('beforeend', `<div class="item"><span class="tag" style="background:${k[0]}">${k[1]}</span><div class="quote">${esc(h.text.slice(0, 300))}</div><div class="res"></div></div>`);
+      const res = out.lastElementChild.querySelector('.res'); waiting(res);
+      try { const r = await run('processRange', h.id, h.mode, '', model()); res.innerHTML = ''; proposal(res, h.id, r, (a) => a !== 'skip' ? run('clearHighlight', h.id) : null); }
+      catch (err) { res.innerHTML = `<div class="err">${esc(err.message)}</div>`; }
+    }
+  } catch (err) { out.innerHTML = `<div class="err">${esc(err.message)}</div>`; }
+};
+
+$('#cm').onclick = async () => {
+  const out = $('#cmOut'); waiting(out, 'Je lis tes commentaires…');
+  try {
+    const list = await run('listComments');
+    if (list.error) { out.innerHTML = `<div class="err">${esc(list.error)}</div>`; return; }
+    if (!list.length) { out.innerHTML = '<div class="notes" style="margin-top:8px">Aucun commentaire ouvert.</div>'; return; }
+    out.innerHTML = '';
+    for (const c of list) {
+      out.insertAdjacentHTML('beforeend', `<div class="item"><div class="notes" style="margin:0 0 6px">💬 ${esc(c.content)}</div>${c.quote ? `<div class="quote">${esc(c.quote.slice(0, 300))}</div>` : ''}<div class="res"></div></div>`);
+      const res = out.lastElementChild.querySelector('.res'); waiting(res);
+      try {
+        const rid = c.quote ? await run('rangeForQuote', c.quote) : null;
+        if (!rid) { const r = await run('callAssist', { mode: '', instruction: c.content, text: c.quote || '(pas de passage cité)', model: model() }); res.innerHTML = `<div class="notes">Je n’ai pas retrouvé le passage exact : voici la proposition à copier.</div><textarea>${esc(r.result)}</textarea>${r.notes ? `<div class="notes">${esc(r.notes)}</div>` : ''}`; continue; }
+        const r = await run('processRange', rid, '', c.content, model());
+        res.innerHTML = ''; proposal(res, rid, r, (a) => a !== 'skip' ? run('resolveComment', c.id, '✓ Fait avec Mimi ✨') : null);
+      } catch (err) { res.innerHTML = `<div class="err">${esc(err.message)}</div>`; }
+    }
+  } catch (err) { out.innerHTML = `<div class="err">${esc(err.message)}</div>`; }
+};
+
+$('#site').onclick = async () => window.open(await run('siteUrl'), '_blank');
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { checkAuth, getSpent, BUDGET, hasStore } from '../lib/store.js';
+import { checkAuth, getSpent, getBudget, hasStore } from '../lib/store.js';
 
 const DEFAULT_DOCS = [
   {
@@ -16,5 +16,5 @@ export default async function handler(req, res) {
   let docs = DEFAULT_DOCS;
   try { if (process.env.DOCS_JSON) docs = JSON.parse(process.env.DOCS_JSON); } catch {}
   const spent = await getSpent();
-  res.status(200).json({ budget: BUDGET, spent, docs, sync: hasStore, hasKey: Boolean(process.env.ANTHROPIC_API_KEY) });
+  res.status(200).json({ budget: await getBudget(), spent, docs, sync: hasStore, hasKey: Boolean(process.env.ANTHROPIC_API_KEY) });
 }

@@ -23,6 +23,18 @@ const mem = globalThis.__mimiMem || (globalThis.__mimiMem = { spent: 0 });
 
 export const BUDGET = Number(process.env.BUDGET_USD || 5);
 
+// Budget = BUDGET_USD + every top-up Mimi asked for (each top-up adds BUDGET_USD again).
+export async function getBudget() {
+  if (!hasStore) return BUDGET + (mem.extra || 0);
+  return BUDGET + Number((await redis('GET', 'mimi:extra')) || 0);
+}
+export async function topUp() {
+  if (!hasStore) { mem.extra = (mem.extra || 0) + BUDGET; mem.topups = (mem.topups || 0) + 1; return BUDGET + mem.extra; }
+  const extra = Number(await redis('INCRBYFLOAT', 'mimi:extra', BUDGET));
+  await redis('INCR', 'mimi:topups');
+  return BUDGET + extra;
+}
+
 export async function getSpent() {
   if (!hasStore) return mem.spent;
   return Number((await redis('GET', 'mimi:spent')) || 0);
