@@ -6,6 +6,10 @@
 const API = 'https://mimi-pfe.vercel.app/api/assist';
 const CODE = '0000';
 const SITE = 'https://mimi-pfe.vercel.app';
+const DOC_ID = '1lICUj22QaWa8SCEdLOWhNshVTFGw_fY8PGG3hGhRA2w';
+
+// Google sometimes fails on getActiveDocument (multi-account sessions): fall back to opening the doc by ID.
+function doc_() { try { return DocumentApp.getActiveDocument(); } catch (e) { return DocumentApp.openById(DOC_ID); } }
 
 function onOpen() {
   DocumentApp.getUi().createMenu('✨ Mimi')
@@ -17,7 +21,7 @@ function onInstall() { onOpen(); }
 /** Run ONCE from the editor (Omar): the sidebar then opens by itself every time the doc is opened. */
 function installAutoOpen() {
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'autoOpen') ScriptApp.deleteTrigger(t); });
-  ScriptApp.newTrigger('autoOpen').forDocument(DocumentApp.getActiveDocument()).onOpen().create();
+  ScriptApp.newTrigger('autoOpen').forDocument(DOC_ID).onOpen().create();
 }
 function autoOpen() { try { showSidebar(); } catch (e) {} }
 
@@ -61,9 +65,9 @@ function contextAround_(range) {
 
 /** Saves the current selection as a named range and returns its id + text. */
 function grabSelection() {
-  const doc = DocumentApp.getActiveDocument();
-  const sel = doc.getSelection();
-  if (!sel) return { error: 'Sélectionne d’abord un passage dans le document.' };
+  const doc = doc_();
+  let sel = null; try { sel = doc.getSelection(); } catch (e) {}
+  if (!sel) return { error: 'Sélectionne d’abord un passage dans le document (ou surligne-le et utilise « Traiter mes surlignages »).' };
   const text = rangeText_(sel).trim();
   if (!text) return { error: 'La sélection est vide.' };
   const nr = doc.addNamedRange('mimi_sel', sel);
@@ -72,7 +76,7 @@ function grabSelection() {
 
 /** Runs the AI on a saved selection. */
 function processSelection(id, mode, instruction, model) {
-  const doc = DocumentApp.getActiveDocument();
+  const doc = doc_();
   const nr = doc.getNamedRangeById(id);
   if (!nr) throw new Error('La sélection a été perdue. Re-sélectionne le passage.');
   const range = nr.getRange();
@@ -81,7 +85,7 @@ function processSelection(id, mode, instruction, model) {
 
 /** Replaces the text of a saved range (keeps paragraph style), or inserts after it. */
 function applyToRange(id, newText, how) {
-  const doc = DocumentApp.getActiveDocument();
+  const doc = doc_();
   const nr = doc.getNamedRangeById(id);
   if (!nr) throw new Error('Passage introuvable (il a peut-être été modifié).');
   const els = nr.getRange().getRangeElements();
@@ -123,7 +127,7 @@ function applyToRange(id, newText, how) {
 }
 
 function forgetRange(id) {
-  const nr = DocumentApp.getActiveDocument().getNamedRangeById(id);
+  const nr = doc_().getNamedRangeById(id);
   if (nr) nr.remove();
 }
 
@@ -145,7 +149,7 @@ function colorKind_(hex) {
 const KIND_MODE = { yellow: 'improve', red: 'check', green: 'expand', blue: 'source' };
 
 function scanHighlights() {
-  const doc = DocumentApp.getActiveDocument();
+  const doc = doc_();
   doc.getNamedRanges('mimi_hl').forEach(function (r) { r.remove(); });
   const out = [];
   const body = doc.getBody();
@@ -172,7 +176,7 @@ function scanHighlights() {
 }
 
 function processRange(id, mode, instruction, model) {
-  const doc = DocumentApp.getActiveDocument();
+  const doc = doc_();
   const nr = doc.getNamedRangeById(id);
   if (!nr) throw new Error('Passage introuvable.');
   const range = nr.getRange();
@@ -180,7 +184,7 @@ function processRange(id, mode, instruction, model) {
 }
 
 function clearHighlight(id) {
-  const nr = DocumentApp.getActiveDocument().getNamedRangeById(id);
+  const nr = doc_().getNamedRangeById(id);
   if (!nr) return;
   nr.getRange().getRangeElements().forEach(function (re) {
     const el = re.getElement(); if (!el.editAsText) return;
@@ -192,7 +196,7 @@ function clearHighlight(id) {
 // ---------- comments (needs the Drive API service: Services ＋ → Drive API) ----------
 function listComments() {
   if (typeof Drive === 'undefined') return { error: 'Pour lire les commentaires, Omar doit activer le service « Drive API » dans Apps Script.' };
-  const id = DocumentApp.getActiveDocument().getId();
+  const id = doc_().getId();
   const res = Drive.Comments.list(id, { fields: 'comments(id,content,quotedFileContent,resolved,author(displayName))', pageSize: 100 });
   return (res.comments || []).filter(function (c) { return !c.resolved; }).map(function (c) {
     return { id: c.id, content: c.content, quote: (c.quotedFileContent && c.quotedFileContent.value) || '', author: c.author && c.author.displayName };
@@ -203,7 +207,7 @@ function escRe_(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
 /** Finds the commented passage in the doc and saves it as a range. */
 function rangeForQuote(quote) {
-  const doc = DocumentApp.getActiveDocument();
+  const doc = doc_();
   const q = String(quote).split('\n')[0].slice(0, 200);
   if (!q.trim()) return null;
   const f = doc.getBody().findText(escRe_(q));
@@ -214,7 +218,7 @@ function rangeForQuote(quote) {
 
 function resolveComment(commentId, note) {
   if (typeof Drive === 'undefined') return;
-  const id = DocumentApp.getActiveDocument().getId();
+  const id = doc_().getId();
   Drive.Replies.create({ content: note || '✓ Fait avec Mimi ✨', action: 'resolve' }, id, commentId, { fields: 'id' });
 }
 
