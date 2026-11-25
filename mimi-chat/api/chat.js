@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { checkAuth, getSpent, addSpent, getBudget, readJson } from '../lib/store.js';
 import { SYSTEM, TOOLS_NOTE } from '../lib/system.js';
-import { hasRepo, clean, badPath, listAll, readFile, writeFile } from '../lib/github.js';
+import { hasRepo, clean, badPath, listAll, readFile, writeFile, recentChanges } from '../lib/github.js';
 
 export const config = { maxDuration: 300, api: { bodyParser: { sizeLimit: '4.5mb' } } };
 
@@ -16,6 +16,11 @@ const WORK_DIR = 'Travail_Mimi/';
 const TEXT_EXT = /\.(md|txt|csv|json|py|tex|bib|html|xml|yml|yaml)$/i;
 
 const PROJECT_TOOLS = [
+  {
+    name: 'project_history',
+    description: "Historique récent du dossier projet partagé : qui a modifié quoi et quand (Omar depuis son ordinateur, Mimi sur le site, ou son assistante IA), avec la liste des fichiers ajoutés (+), modifiés (~) ou supprimés (-). À utiliser quand Mimi demande ce qui a changé, ce qu'Omar a fait, ce qu'elle a fait, ou ce que l'assistante a produit.",
+    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+  },
   {
     name: 'list_project_files',
     description: "Liste tous les fichiers du dossier projet partagé de Mimi (mémoire, brouillons, sources, notes, transcriptions). À utiliser avant de lire un fichier quand on ne connaît pas son chemin exact.",
@@ -74,6 +79,11 @@ function toApiMessages(messages) {
 
 async function runTool(name, input, send) {
   try {
+    if (name === 'project_history') {
+      send({ t: 'status', v: 'listing' });
+      const ch = await recentChanges(15);
+      return ch.map((c) => c.date.slice(0, 16).replace('T', ' ') + ' · ' + c.who + ' · ' + c.message + '\n' + c.files.map((f) => '   ' + f).join('\n')).join('\n\n') || '(aucun changement)';
+    }
     if (name === 'list_project_files') {
       send({ t: 'status', v: 'listing' });
       const all = await listAll();

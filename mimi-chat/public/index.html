@@ -832,7 +832,7 @@ async function uploadFiles(list) {
 async function saveToProject(path, b64, message) {
   const r = await api('/api/files', { method: 'PUT', body: JSON.stringify({ path, content: b64, message }) });
   const j = await r.json(); if (!r.ok || j.error) { toast('Erreur : ' + (j.error || r.status)); return false; }
-  toast(j.updated ? 'Fichier mis à jour ✓' : 'Enregistré dans le projet ✓'); return true;
+  toast(j.copy ? 'Ce fichier existe déjà : enregistré en copie à ton nom ✓' : j.updated ? 'Fichier mis à jour ✓' : 'Enregistré dans le projet ✓'); return true;
 }
 async function previewFile(path) {
   const p = $('#docs'); p.classList.add('previewing'); p.classList.remove('canvas'); $('#docsBack').style.display = ''; $('#docsTitle').textContent = path.split('/').pop();

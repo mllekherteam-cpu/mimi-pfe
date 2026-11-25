@@ -54,3 +54,24 @@ export async function writeFile(path, base64, message) {
   if (!r.ok) throw new Error(j.message || `GitHub ${r.status}`);
   return { updated: Boolean(sha) };
 }
+
+
+/** Recent changes in the shared folder: who did what (Omar's PC sync, Mimi on the site, her assistant). */
+export async function recentChanges(limit = 15) {
+  const r = await gh(`commits?sha=${BRANCH}&per_page=${Math.min(limit, 30)}`);
+  if (!r.ok) throw new Error(`GitHub ${r.status}`);
+  const list = await r.json();
+  const out = [];
+  for (const c of list.slice(0, limit)) {
+    const msg = c.commit.message.split('\n')[0];
+    const who = /^Assistante :/.test(msg) ? 'son assistante (IA)' : /^Mimi :/.test(msg) ? 'Mimi (sur le site)' : 'Omar (depuis son ordinateur)';
+    let files = [];
+    try {
+      const d = await (await gh(`commits/${c.sha}`)).json();
+      files = (d.files || []).filter((f) => !HIDDEN.test(f.filename))
+        .map((f) => `${f.status === 'added' ? '+' : f.status === 'removed' ? '-' : '~'} ${f.filename}`).slice(0, 25);
+    } catch {}
+    out.push({ date: c.commit.author.date, who, message: msg, files });
+  }
+  return out;
+}

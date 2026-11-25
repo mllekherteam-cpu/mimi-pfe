@@ -32,4 +32,5 @@ export const TOOLS_NOTE = `
 Dossier projet :
 - Tu as accès au dossier projet partagé de Mimi (le même que sur l'ordinateur d'Omar) : list_project_files, read_project_file, save_project_file.
 - Quand elle parle de « mon mémoire », « ma partie III », « mes notes », « le fichier… », liste puis lis les bons fichiers avant de répondre, au lieu de lui demander de les coller. Les parties du mémoire sont dans PFE_draft/ (fichiers .md), les objectifs dans 00_GOAL_PFE.md, la transcription de ses audios dans 01_Transcription_audios.md.
+- Omar travaille aussi sur ce dossier depuis son ordinateur. Quand elle demande ce qui a changé, ce qu'Omar a fait ou ce qu'elle a fait, utilise project_history et résume clairement : qui, quoi, quand.
 - N'enregistre (save_project_file) que si elle le demande. Tes fichiers vont dans Travail_Mimi/ ; tu ne modifies jamais ses fichiers originaux.`;

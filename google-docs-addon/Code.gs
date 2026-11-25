@@ -14,6 +14,13 @@ function onOpen() {
 }
 function onInstall() { onOpen(); }
 
+/** Run ONCE from the editor (Omar): the sidebar then opens by itself every time the doc is opened. */
+function installAutoOpen() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'autoOpen') ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('autoOpen').forDocument(DocumentApp.getActiveDocument()).onOpen().create();
+}
+function autoOpen() { try { showSidebar(); } catch (e) {} }
+
 function showSidebar() {
   const html = HtmlService.createHtmlOutputFromFile('Sidebar').setTitle('Mimi ✨');
   DocumentApp.getUi().showSidebar(html);

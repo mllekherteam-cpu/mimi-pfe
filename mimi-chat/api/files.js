@@ -22,8 +22,19 @@ export default async function handler(req, res) {
       const { path: p, content, message } = await readJson(req);
       const path = clean(p);
       if (!path || badPath(path)) return res.status(400).json({ error: 'chemin refusé' });
-      const r = await writeFile(path, content, message);
-      return res.status(200).json({ ok: true, path, ...r });
+      // Never overwrite Omar's files: outside Travail_Mimi/ an existing name gets a '(Mimi date)' copy instead.
+      let target = path;
+      if (!path.startsWith('Travail_Mimi/')) {
+        let exists = false;
+        try { await readFile(path); exists = true; } catch {}
+        if (exists) {
+          const d = new Date().toISOString().slice(0, 10);
+          const m = path.match(/^(.*?)(\.[^./]+)?$/);
+          target = `${m[1]} (Mimi ${d})${m[2] || ''}`;
+        }
+      }
+      const r = await writeFile(target, content, message);
+      return res.status(200).json({ ok: true, path: target, copy: target !== path, ...r });
     }
     res.status(405).json({ error: 'method' });
   } catch (e) {
