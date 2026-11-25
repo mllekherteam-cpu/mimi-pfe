@@ -104,7 +104,7 @@
     const st = STYLES[c.style] || STYLES.faon, acc = accessories(c);
     const spots = st.spots ? both(`<circle cx="58" cy="168" r="3.2"/><circle cx="68" cy="161" r="2.4"/><circle cx="62" cy="178" r="2.2"/>`) : '';
     const headSpots = st.spots ? `<circle cx="91" cy="55" r="2.6"/><circle cx="103" cy="50" r="2.1"/><circle cx="112" cy="58" r="1.9"/>` : '';
-    const lashes = st.lashes ? both(`<path class="d-line" d="M71.5 79L65 75.5M70.6 84L64 83" stroke-width="2.2"/>`) : '';
+    const lashes = st.lashes ? both(`<path class="d-line" d="M69.2 82.2L63.5 78.6M68.8 84.4L63.8 84" stroke-width="2.1"/>`) : '';
     return `<svg class="d-art" viewBox="0 0 200 200" aria-hidden="true">
   <ellipse cx="100" cy="190" rx="52" ry="6" fill="#000" opacity=".07"/>
   ${acc.back}
@@ -127,7 +127,7 @@
     <g class="d-cream">${headSpots}</g>
     <ellipse class="d-cream" cx="100" cy="105" rx="24" ry="17"/>
     <g class="d-eyes">
-      ${both(`<ellipse class="d-ink" cx="80" cy="85" rx="9.5" ry="11.5"/><ellipse cx="80" cy="88" rx="6" ry="6.5" fill="#5a3a32" opacity=".55"/><circle cx="83.6" cy="80.4" r="3.6" fill="#fff"/><circle cx="77" cy="90" r="1.7" fill="#fff" opacity=".9"/>`)}
+      ${both(`<ellipse cx="80" cy="87" rx="9.8" ry="9.5" fill="#9bdcd5" stroke="#3b3033" stroke-width="1.6"/><ellipse cx="80" cy="91.2" rx="6.6" ry="3.6" fill="#c7f0ec" opacity=".85"/><ellipse cx="81.2" cy="85.2" rx="5.2" ry="5.5" fill="#2d2024"/><circle cx="84.2" cy="83.6" r="2.7" fill="#fff"/><circle cx="77.2" cy="89.8" r="1.4" fill="#fff" opacity=".92"/><path class="d-coat" d="M68 83.2C73 80.5 85 80.4 91.5 83.2V73H68Z"/><path d="M69 82.8C74 79.8 85 79.8 91 82.8C88 76.2 72.5 76.2 69 82.8Z" fill="#3b1f14" opacity=".13"/><path d="M69.2 82.8C74.5 80.3 85 80.3 90.6 82.8" fill="none" stroke="#2d2024" stroke-width="2.2" stroke-linecap="round"/><path d="M69.8 82.4L66.2 80.2M69.3 84.1L66.4 83.2" fill="none" stroke="#2d2024" stroke-width="1.7" stroke-linecap="round"/>`)}
       ${lashes}
     </g>
     ${both(`<ellipse cx="66" cy="101" rx="8" ry="4.5" fill="#ff8ea8" opacity=".42"/>`)}
@@ -223,8 +223,8 @@
     render(); document.body.appendChild(bg);
     const close = (keep) => { if (!keep) { cfg = JSON.parse(before); apply(cfg); } bg.remove(); };
     bg.addEventListener('click', (e) => {
-      const t = e.target.closest('button, .modal-bg'); if (!t) return;
-      if (t === bg) return close(false);
+      if (e.target === bg) return close(false);
+      const t = e.target.closest('button'); if (!t) return;
       const d = t.dataset;
       if ('cancel' in d) return close(false);
       if ('ok' in d) { cfg = draft; save(cfg); apply(cfg); close(true); return; }
