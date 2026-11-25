@@ -60,7 +60,7 @@
   }
   function vars(c) {
     const p = palette(c), st = STYLES[c.style] || STYLES.faon;
-    return `--d-coat:${p.coat};--d-cream:${p.cream};--d-inner:${p.inner};--d-nose:${st.redNose ? '#d8433f' : p.nose};--d-hoof:${p.hoof};--d-antler:${p.antler};--d-acc:${c.accColor};--d-acc2:${mix(c.accColor, '#000000', .18)}`;
+    return `--d-coat:${p.coat};--d-cream:${p.cream};--d-patch:${mix(p.coat, p.cream, .62)};--d-lid:${mix(p.coat, p.cream, .32)};--d-inner:${p.inner};--d-nose:${st.redNose ? '#d8433f' : p.nose};--d-hoof:${p.hoof};--d-antler:${p.antler};--d-acc:${c.accColor};--d-acc2:${mix(c.accColor, '#000000', .18)}`;
   }
 
   // ---------- drawing ----------
@@ -72,15 +72,18 @@
   };
 
   function ear() {
-    return `<g class="d-ear"><path class="d-coat" d="M68 66C54 49 27 44 14 52C22 69 47 77 68 73Z"/>`
-      + `<path class="d-inner" d="M63 67C51 56 33 53 24 56C32 66 47 71 63 71Z"/>`
-      + `<path class="d-shade" d="M68 73C47 77 22 69 14 52C26 63 48 69 68 68Z"/></g>`;
+    return `<g class="d-ear"><path class="d-coat" d="M68 67C59 42 42 23 23 22C19 37 26 62 47 73C55 77 63 76 68 74Z"/>`
+      + `<path class="d-cream" d="M64 67C57 48 43 32 28 30C27 42 34 61 50 69C56 72 61 72 64 71Z"/>`
+      + `<path class="d-inner" opacity=".62" d="M61 68C55 54 45 43 36 42C36 52 43 64 55 69Z"/>`
+      + `<path class="d-shade" d="M68 74C55 77 32 71 23 22C29 52 47 70 68 70Z"/></g>`;
   }
 
-  function flower(x, y, r, petal, center) {
+  function rose(x, y, r, col) {
+    const lt = mix(col, '#ffffff', .35), dk = mix(col, '#5c1f30', .22);
     let s = '';
-    for (let i = 0; i < 5; i++) { const a = (i * 72 - 90) * Math.PI / 180; s += `<circle cx="${(x + Math.cos(a) * r).toFixed(1)}" cy="${(y + Math.sin(a) * r).toFixed(1)}" r="${(r * .92).toFixed(1)}" fill="${petal}"/>`; }
-    return s + `<circle cx="${x}" cy="${y}" r="${(r * .7).toFixed(1)}" fill="${center}"/>`;
+    for (let i = 0; i < 5; i++) { const a = (i * 72 - 90) * Math.PI / 180; s += `<circle cx="${(x + Math.cos(a) * r * .55).toFixed(1)}" cy="${(y + Math.sin(a) * r * .55).toFixed(1)}" r="${(r * .65).toFixed(1)}" fill="${col}"/>`; }
+    return s + `<circle cx="${x}" cy="${y}" r="${(r * .68).toFixed(1)}" fill="${lt}"/>`
+      + `<path d="M${(x - r * .38).toFixed(1)} ${(y - r * .1).toFixed(1)}A${(r * .4).toFixed(1)} ${(r * .4).toFixed(1)} 0 1 1 ${(x + r * .35).toFixed(1)} ${(y + r * .15).toFixed(1)}A${(r * .25).toFixed(1)} ${(r * .25).toFixed(1)} 0 1 1 ${(x - r * .1).toFixed(1)} ${(y + r * .12).toFixed(1)}" fill="none" stroke="${dk}" stroke-width="${(r * .14).toFixed(1)}" stroke-linecap="round" opacity=".65"/>`;
   }
 
   function accessories(c) {
@@ -89,36 +92,34 @@
       + `<path class="d-acc2" d="M110 133L119 163L106 161L102 135Z"/><path class="d-acc" d="M104 134L114 164L101 163L97 135Z"/>`
       + `<path d="M74 126C90 136 110 136 126 126" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-dasharray="3 5" fill="none"/>`;
     if (a.has('crown')) {
-      o.head += `<path d="M66 58C76 44 124 44 134 58" stroke="#7fae7a" stroke-width="3" fill="none" stroke-linecap="round"/>`;
-      [[73, 52, -40], [91, 44, -15], [109, 44, 15], [127, 52, 40]].forEach(([x, y, r]) => { o.head += `<ellipse cx="${x}" cy="${y}" rx="5" ry="2.4" fill="#8fbf7f" transform="rotate(${r} ${x} ${y})"/>`; });
-      o.head += flower(67, 58, 4.2, c.accColor, '#ffe08a') + flower(82, 47, 4.6, '#ffffff', '#ffd36e') + flower(100, 42, 5.4, c.accColor, '#ffe08a') + flower(118, 47, 4.6, '#ffffff', '#ffd36e') + flower(133, 58, 4.2, c.accColor, '#ffe08a');
+      [[75, 47, -28], [82, 51, -12], [123, 50, 26], [116, 54, 48]].forEach(([x, y, r]) => { o.head += `<ellipse cx="${x}" cy="${y}" rx="7.5" ry="3.3" fill="#9ab392" transform="rotate(${r} ${x} ${y})"/>`; });
+      o.head += rose(92, 43, 9.2, c.accColor) + rose(109, 45, 9.2, mix(c.accColor, '#ffffff', .12));
     }
-    if (a.has('bow')) o.head += `<g transform="translate(139 58) rotate(26)"><path class="d-acc" d="M0 0C-9-11-21-9-19 0C-21 9-9 11 0 0Z"/><path class="d-acc" d="M0 0C9-11 21-9 19 0C21 9 9 11 0 0Z"/>`
+    if (a.has('bow')) o.head += `<g transform="translate(136 56) rotate(26)"><path class="d-acc" d="M0 0C-9-11-21-9-19 0C-21 9-9 11 0 0Z"/><path class="d-acc" d="M0 0C9-11 21-9 19 0C21 9 9 11 0 0Z"/>`
       + `<path class="d-acc2" d="M-2 2L-7 14L-2 12L1 15L2 3Z"/><circle class="d-acc2" r="4.6"/><circle r="1.6" cx="-1.2" cy="-1.4" fill="#fff" opacity=".6"/></g>`;
-    if (a.has('glasses')) o.top += `<g fill="#fff" fill-opacity=".14" stroke="#3b2a2a" stroke-width="2.8"><circle cx="80" cy="85" r="15"/><circle cx="120" cy="85" r="15"/></g>`
-      + `<path d="M95 83C98 80 102 80 105 83M65 82L58 78M135 82L142 78" stroke="#3b2a2a" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;
-    if (a.has('cap')) o.top += `<path d="M78 34V45C90 52 110 52 122 45V34Z" fill="#3a2e33"/><path d="M100 18L144 31L100 44L56 31Z" fill="#2e2427"/>`
+    if (a.has('glasses')) o.head += `<g fill="#fff" fill-opacity=".14" stroke="#3b2a2a" stroke-width="2.6"><circle cx="78" cy="88" r="14.5"/><circle cx="122" cy="88" r="14.5"/></g>`
+      + `<path d="M92.5 86C96.5 83 103.5 83 107.5 86M63.5 85L57 81M136.5 85L143 81" stroke="#3b2a2a" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+    if (a.has('cap')) o.head += `<path d="M78 34V45C90 52 110 52 122 45V34Z" fill="#3a2e33"/><path d="M100 18L144 31L100 44L56 31Z" fill="#2e2427"/>`
       + `<path d="M100 18L144 31L100 44L56 31Z" fill="#fff" opacity=".07"/><path d="M100 31L136 36V54" stroke="${c.accColor}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
       + `<path d="M133 53H139L140 62H132Z" fill="${c.accColor}"/><circle cx="100" cy="31" r="2.6" fill="${c.accColor}"/>`;
     if (a.has('helmet')) o.head += `<g class="d-helmet">`
-      + `<path d="M64 74C75 66 125 66 136 74C141 82 140 98 134 105C122 109 78 109 66 105C60 98 59 82 64 74Z" fill="none" stroke="#6d6973" stroke-width="4.5"/>`
-      + `<path fill-rule="evenodd" fill="#1e1c22" d="M100 26C136 26 156 50 154 86C153 109 137 128 100 131C63 128 47 109 46 86C44 50 64 26 100 26ZM64 74C59 82 60 98 66 105C78 109 122 109 134 105C140 98 141 82 136 74C125 66 75 66 64 74Z"/>`
-      + `<path d="M56 64C70 50 130 50 144 64" fill="none" stroke="${c.accColor}" stroke-width="3.2" stroke-linecap="round" opacity=".9"/>`
-      + `<path d="M64 74C75 66 125 66 136 74C141 82 140 98 134 105C122 109 78 109 66 105C60 98 59 82 64 74Z" fill="none" stroke="#36333d" stroke-width="2.2"/>`
-      + `<path d="M62 46C74 34 94 31 110 34C96 36 80 41 68 51Z" fill="#fff" opacity=".18"/>`
-      + `<rect x="89" y="114" width="22" height="7" rx="3.5" fill="#322f38"/><path d="M93 117.5H107" stroke="#524e5b" stroke-width="1.6" stroke-linecap="round"/>`
-      + `${both(`<circle cx="50" cy="84" r="4.6" fill="#33303a" stroke="#141217" stroke-width="1.2"/><circle cx="50" cy="84" r="1.6" fill="#6b6775"/>`)}`
+      + `<path d="M62 76C74 68 126 68 138 76C142 84 141 101 134 109C122 114 78 114 66 109C59 101 58 84 62 76Z" fill="none" stroke="#6d6973" stroke-width="4.5"/>`
+      + `<path fill-rule="evenodd" fill="#1e1c22" d="M100 28C134 28 152 52 150 86C149 110 134 130 100 133C66 130 51 110 50 86C48 52 66 28 100 28ZM62 76C58 84 59 101 66 109C78 114 122 114 134 109C141 101 142 84 138 76C126 68 74 68 62 76Z"/>`
+      + `<path d="M59 65C72 52 128 52 141 65" fill="none" stroke="${c.accColor}" stroke-width="3" stroke-linecap="round" opacity=".9"/>`
+      + `<path d="M62 76C74 68 126 68 138 76C142 84 141 101 134 109C122 114 78 114 66 109C59 101 58 84 62 76Z" fill="none" stroke="#36333d" stroke-width="2.2"/>`
+      + `<path d="M65 48C76 36 94 33 109 36C96 38 82 43 70 53Z" fill="#fff" opacity=".18"/>`
+      + `<rect x="89" y="117" width="22" height="6.5" rx="3.2" fill="#322f38"/><path d="M93 120.2H107" stroke="#524e5b" stroke-width="1.5" stroke-linecap="round"/>`
+      + `${both(`<circle cx="53" cy="86" r="4.4" fill="#33303a" stroke="#141217" stroke-width="1.2"/><circle cx="53" cy="86" r="1.5" fill="#6b6775"/>`)}`
       + `</g>`;
-    if (a.has('heart')) o.back += `<path class="d-heart" fill="#e88ea3" d="M172 36C169 32 162 34 164 40C165 43 172 47 172 47S179 43 180 40C182 34 175 32 172 36Z"/>`
-      + `<path class="d-heart d-heart2" fill="#f3b3c2" d="M28 104C26 101.5 21.5 103 23 107C23.7 109 28 111.5 28 111.5S32.3 109 33 107C34.5 103 30 101.5 28 104Z"/>`;
+    if (a.has('heart')) o.back += `<path class="d-heart" fill="#e88ea3" d="M168 68C165 64 158 66 160 72C161 75 168 79 168 79S175 75 176 72C178 66 171 64 168 68Z"/>`
+      + `<path class="d-heart d-heart2" fill="#f3b3c2" d="M30 104C28 101.5 23.5 103 25 107C25.7 109 30 111.5 30 111.5S34.3 109 35 107C36.5 103 32 101.5 30 104Z"/>`;
     return o;
   }
 
   function svg(c = cfg) {
     const st = STYLES[c.style] || STYLES.faon, acc = accessories(c);
     const spots = st.spots ? both(`<circle cx="58" cy="168" r="3.2"/><circle cx="68" cy="161" r="2.4"/><circle cx="62" cy="178" r="2.2"/>`) : '';
-    const headSpots = st.spots ? `<circle cx="91" cy="55" r="2.6"/><circle cx="103" cy="50" r="2.1"/><circle cx="112" cy="58" r="1.9"/>` : '';
-    const lashes = st.lashes ? both(`<path class="d-line" d="M69.2 82.2L63.5 78.6M68.8 84.4L63.8 84" stroke-width="2.1"/>`) : '';
+    const lashes = st.lashes ? both(`<path class="d-line" d="M63.5 82.8L58.5 79.4M63 85.4L59 84.8" stroke-width="2"/>`) : '';
     return `<svg class="d-art" viewBox="0 0 200 200" aria-hidden="true">
   <ellipse cx="100" cy="190" rx="52" ry="6" fill="#000" opacity=".07"/>
   ${acc.back}
@@ -127,27 +128,25 @@
     ${both(`<ellipse class="d-coat" cx="66" cy="174" rx="23" ry="15"/><path class="d-shade" d="M43 176C46 186 62 190 80 186C66 186 52 183 43 176Z"/>`)}
     <path class="d-coat" d="M70 187C61 158 72 127 100 125C128 127 139 158 130 187Z"/>
     <path class="d-shade" d="M70 187C63 165 66 142 80 132C74 150 76 170 84 187Z"/><path class="d-shade" d="M130 187C137 165 134 142 120 132C126 150 124 170 116 187Z"/>
-    <ellipse class="d-cream" cx="100" cy="161" rx="18" ry="23"/>
-    ${st.fluff ? `<path class="d-cream" d="M82 126L88 137L94 129L100 140L106 129L112 137L118 126Z"/>` : ''}
+    <path class="d-cream" d="M84 134L89 142L95 135L100 144L105 135L111 142L116 134C121 152 119 175 113 185H87C81 175 79 152 84 134Z"/>
     <g class="d-cream">${spots}</g>
     ${both(`<rect class="d-coat" x="85" y="146" width="13" height="41" rx="6.5"/><path class="d-hoof" d="M85 179H98V182.5A4.5 4.5 0 0 1 93.5 187H89.5A4.5 4.5 0 0 1 85 182.5Z"/><path class="d-shade" d="M85 152C85 160 86 170 85 179H88C88 170 88 160 85 152Z"/>`)}
   </g>
   ${acc.neck}
   <g class="d-head">
     <g class="d-ears">${ear()}<g transform="${MIRROR}">${ear()}</g></g>
-    <path class="d-coat" d="M100 38C132 38 148 60 146 86C144 110 124 124 100 124C76 124 56 110 54 86C52 60 68 38 100 38Z"/>
-    <path class="d-shade" d="M54 86C56 110 76 124 100 124C124 124 144 110 146 86C140 104 122 116 100 116C78 116 60 104 54 86Z"/>
-    <path class="d-coat" d="M90 42C93 32 101 31 104 38C107 33 113 35 112 42Z"/>
-    <g class="d-cream">${headSpots}</g>
-    <ellipse class="d-cream" cx="100" cy="105" rx="24" ry="17"/>
+    <path class="d-coat" d="M100 41C125 41 141 56 140 80C139 104 123 122 100 124C77 122 61 104 60 80C59 56 75 41 100 41Z"/>
+    <path class="d-shade" d="M60 80C61 104 77 122 100 124C123 122 139 104 140 80C134 102 119 116 100 118C81 116 66 102 60 80Z"/>
+    ${both(`<path fill="var(--d-patch,#f2d5ba)" d="M61 80C62 64 73 59 83 66C90 71 93 84 94 100C94 114 82 121 71 114C63 106 60 93 61 80Z"/>`)}
+    <ellipse fill="var(--d-patch,#f2d5ba)" cx="100" cy="112" rx="22" ry="11.5"/>
+    <ellipse class="d-cream" cx="100" cy="106.5" rx="16.5" ry="13"/>
     <g class="d-eyes">
-      ${both(`<ellipse cx="80" cy="87" rx="9.8" ry="9.5" fill="#5ec93c" stroke="#254423" stroke-width="1.8"/><ellipse cx="80" cy="91" rx="6.8" ry="3.9" fill="#b8f259" opacity=".92"/><ellipse cx="81.2" cy="85.2" rx="4.9" ry="5.2" fill="#22191c"/><circle cx="84.2" cy="83.6" r="2.7" fill="#fff"/><circle cx="77.2" cy="89.8" r="1.4" fill="#fff" opacity=".92"/><path class="d-coat" d="M68 83.2C73 80.5 85 80.4 91.5 83.2V73H68Z"/><path d="M69 82.8C74 79.8 85 79.8 91 82.8C88 76.2 72.5 76.2 69 82.8Z" fill="#3b1f14" opacity=".13"/><path d="M69.2 82.8C74.5 80.3 85 80.3 90.6 82.8" fill="none" stroke="#2d2024" stroke-width="2.2" stroke-linecap="round"/><path d="M69.8 82.4L66.2 80.2M69.3 84.1L66.4 83.2" fill="none" stroke="#2d2024" stroke-width="1.7" stroke-linecap="round"/>`)}
+      ${both(`<path fill="var(--d-lid,#dfa780)" d="M64.5 85.2C68.5 74.5 84 74.5 89.2 85.8C83 82 70 82 64.5 85.2Z"/><path fill="#ffffff" stroke="#8a7465" stroke-width=".9" d="M65.5 85.5C70 81.5 84 82 88.8 87.5C87.5 96.5 76.5 98.8 68.5 95C65.8 92.8 65 89 65.5 85.5Z"/><circle cx="77.8" cy="88.5" r="7.4" fill="#1f631c"/><circle cx="77.8" cy="89.2" r="6.3" fill="#4cc730"/><ellipse cx="77.8" cy="91.8" rx="4.9" ry="2.7" fill="#d9f754"/><circle cx="78.2" cy="87.2" r="3.9" fill="#1e1518"/><circle cx="80.6" cy="85.8" r="2.2" fill="#fff"/><circle cx="74.4" cy="91.2" r="1.2" fill="#fff" opacity=".92"/><path fill="var(--d-lid,#dfa780)" d="M63.5 85.2C69.5 81 83.5 81.8 89.8 87.2C88 77.5 70 76.5 63.5 85.2Z"/><path d="M61.8 82.8C65.5 84.8 70.5 82.2 78 82.6C83.8 83 87.8 85 90 87.5" fill="none" stroke="#2a1d1f" stroke-width="2.5" stroke-linecap="round"/><path d="M64.2 84.2L60.6 81.6" fill="none" stroke="#2a1d1f" stroke-width="2.2" stroke-linecap="round"/>`)}
       ${lashes}
     </g>
-    ${both(`<ellipse cx="66" cy="101" rx="8" ry="4.5" fill="#ff8ea8" opacity=".42"/>`)}
-    <path class="d-nose" d="M92 97C92 92.5 108 92.5 108 97C108 102 103 105 100 105C97 105 92 102 92 97Z"/>
-    <ellipse cx="96.6" cy="96" rx="2.8" ry="1.5" fill="#fff" opacity=".55"/>
-    <path class="d-line" d="M100 105V109M100 109C98 112.5 94 112.5 92.5 110M100 109C102 112.5 106 112.5 107.5 110" stroke-width="2"/>
+    <path class="d-nose" d="M94.2 101.2C94.2 98.2 105.8 98.2 105.8 101.2C105.8 104.2 102.2 106.5 100 106.5C97.8 106.5 94.2 104.2 94.2 101.2Z"/>
+    <ellipse cx="98.4" cy="100.3" rx="2.2" ry="1.1" fill="#fff" opacity=".45"/>
+    <path class="d-line" d="M100 106.5V109.8M100 109.8C98.2 112.4 95.2 112.4 93.8 110.6M100 109.8C101.8 112.4 104.8 112.4 106.2 110.6" stroke-width="1.8"/>
     ${acc.head}
   </g>
   ${acc.top}

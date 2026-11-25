@@ -7,7 +7,7 @@
   const face = (v) => FACES.filter((f) => v >= f[0]).pop();
   const send = (body) => fetch('/api/mood', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-access-code': settings.code || '' }, body: JSON.stringify(body) }).catch(() => {});
 
-  const DEER_VARS = '--d-coat:#c98a5e;--d-cream:#fdf1e6;--d-inner:#f3b9ae;--d-nose:#4a3030;--d-hoof:#6b4a3a;--d-antler:#ecdcc0;--d-acc:#e88ea3;--d-acc2:#ba7182';
+  const DEER_VARS = '--d-coat:#c98a5e;--d-cream:#fdf1e6;--d-patch:#eacab2;--d-lid:#daab8a;--d-inner:#f3b9ae;--d-nose:#4a3030;--d-hoof:#6b4a3a;--d-antler:#ecdcc0;--d-acc:#e88ea3;--d-acc2:#ba7182';
   const deerStyle = () => document.querySelector('#fawn')?.getAttribute('style') || DEER_VARS;
   const deerHtml = (cls) => `<span class="${cls}" style="${deerStyle()}" aria-hidden="true">${window.Deer?.svg ? window.Deer.svg() : '🦌'}</span>`;
 
