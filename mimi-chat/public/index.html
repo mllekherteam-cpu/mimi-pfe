@@ -210,12 +210,13 @@ select.pill:hover{background-color:#fbefed}
 #giftNote b{display:block;font-size:14.5px}
 #giftNote small{color:var(--mute);font-size:12.5px}
 #giftNote button{margin-top:6px;background:var(--accent);color:#fff;border-radius:9px;padding:5px 12px;font-size:13px}
-#tune{display:none;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 9px}
+#tune{display:none;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 8px}
 #tune.on{display:flex}
 #tune .tt{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
 #tune .tt b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 #tune .tt small{color:var(--mute)}
-#tune button{width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;background:var(--accent-2);color:var(--accent);flex:none}
+#tune button{width:28px;height:28px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;background:var(--accent-2);color:var(--accent);flex:none}
+#tune button[hidden]{display:none}
 #tune button:hover{background:#f3d5dc}
 #tune .eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px;margin-left:4px;vertical-align:-1px}
 #tune .eq i{width:2.5px;background:var(--accent);border-radius:2px;height:4px}
@@ -356,7 +357,7 @@ body:not(.ready) #side{transition:none}
   </div>
   <div id="convList"></div>
   <div class="side-foot">
-    <div id="tune"><button id="tPlay" title="Écouter">▶</button><div class="tt"><b>Cua cuaaa 🫂❤️</b><small id="tState">notre chanson</small><span class="eq"><i></i><i></i><i></i></span></div><button id="tVid" title="Voir la vidéo">📺</button></div>
+    <div id="tune"><button id="tPlay" title="Écouter">▶</button><div class="tt"><b id="tTitle">Cua cuaaa 🫂❤️</b><small id="tState">notre chanson</small><span class="eq"><i></i><i></i><i></i></span></div><button id="tNext" title="Chanson suivante" aria-label="Chanson suivante"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 5.5v13l10-6.5-10-6.5zM17 5.5h2.5v13H17v-13z"/></svg></button><button id="tVid" title="Voir la vidéo">📺</button></div>
     <div class="foot-btns">
       <button class="ghost" id="openDocs"><svg class="icon" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Documents</button>
       <button class="ghost" id="openSettings"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Réglages</button>
@@ -435,6 +436,7 @@ body:not(.ready) #side{transition:none}
 
 <div class="toast" id="toast"></div>
 <div id="vbox"><video id="vid" src="/media/cuacua-9c3cfb7b1357.mp4" preload="none" playsinline controls></video><button class="vx" id="vClose" title="Fermer">✕</button></div>
+<audio id="aud" preload="none"></audio>
 <div id="fawn" aria-hidden="true"></div>
 <div id="fromOmar" title="🤍">Made by Omar with love ❤️</div>
 
@@ -479,39 +481,95 @@ async function api(path, opts = {}) {
 }
 
 // ---------- conversations ----------
+const SYNC_MAX = 750_000; // stay well under Upstash 1 MB & Vercel 4.5 MB limits
+const dirtySync = new Set();
+let syncTimer = 0;
+
 function saveIndex() { LS.set('index', index); }
 function upsertIndex(c) {
   const e = { id: c.id, title: c.title, updated: c.updated, model: c.model, pinned: !!c.pinned };
   index = [e, ...index.filter((x) => x.id !== c.id)];
   saveIndex(); renderList();
 }
-function storeConv(c) {
+async function pushConv(c, force = false) {
+  if (!cfg.sync || !c?.id) return;
+  dirtySync.add(c.id);
+  try {
+    let payload = c;
+    if (JSON.stringify(payload).length > SYNC_MAX) {
+      payload = structuredClone(c);
+      for (const m of payload.messages || []) for (const f of m.files || []) delete f.data;
+    }
+    const r = await api('/api/convs', { method: 'PUT', body: JSON.stringify({ conv: payload, force }) });
+    if (r.ok) dirtySync.delete(c.id);
+  } catch {}
+}
+function storeConv(c, force = false) {
   if (!LS.set('conv:' + c.id, c)) {           // localStorage full: keep text, drop file bytes
     const light = structuredClone(c); for (const m of light.messages) for (const f of m.files || []) delete f.data;
     LS.set('conv:' + c.id, light);
   }
   upsertIndex(c);
-  if (cfg.sync) api('/api/convs', { method: 'PUT', body: JSON.stringify({ conv: c }) }).catch(() => {});
+  if (cfg.sync) pushConv(c, force);
 }
 async function loadConv(id) {
   let c = LS.get('conv:' + id, null);
+  let serverChecked = false;
   if (cfg.sync) {
-    try { const r = await api('/api/convs?id=' + encodeURIComponent(id)); const s = await r.json(); if (s && (!c || s.updated >= c.updated)) { c = s; LS.set('conv:' + id, s); } } catch {}
+    try {
+      const r = await api('/api/convs?id=' + encodeURIComponent(id));
+      if (r.ok) {
+        serverChecked = true;
+        const s = await r.json();
+        if (s && (!c || (s.updated || 0) >= (c.updated || 0))) { c = s; LS.set('conv:' + id, s); }
+      }
+    } catch {}
   }
-  return c;
+  return { conv: c, serverChecked };
 }
 async function syncIndex() {
   if (!cfg.sync) return;
   try {
-    const r = await api('/api/convs'); const j = await r.json(); if (!j.sync) return;
+    const r = await api('/api/convs');
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j.sync) return;
+    const serverMap = new Map(j.list.map((x) => [x.id, x]));
     const map = new Map(index.map((x) => [x.id, x]));
-    for (const s of j.list) { const l = map.get(s.id); if (!l || s.updated > l.updated) map.set(s.id, s); }
-    // push local-only ones up
-    const serverIds = new Set(j.list.map((x) => x.id));
-    for (const l of index) if (!serverIds.has(l.id)) { const c = LS.get('conv:' + l.id); if (c) api('/api/convs', { method: 'PUT', body: JSON.stringify({ conv: c }) }).catch(() => {}); }
-    index = [...map.values()].sort((a, b) => b.updated - a.updated); saveIndex(); renderList();
+    for (const s of j.list) {
+      const l = map.get(s.id);
+      if (!l || (s.updated || 0) > (l.updated || 0)) map.set(s.id, s);
+    }
+    // push local-only, newer-local, or previously failed convos up to the server
+    for (const l of index) {
+      const s = serverMap.get(l.id);
+      if (!s || (l.updated || 0) > (s.updated || 0) || dirtySync.has(l.id)) {
+        const c = LS.get('conv:' + l.id);
+        if (c) pushConv(c);
+      }
+    }
+    index = [...map.values()].sort((a, b) => b.updated - a.updated);
+    saveIndex(); renderList();
+    // if the currently open conversation was updated on another device, refresh it live
+    if (conv && !busy) {
+      const s = serverMap.get(conv.id);
+      if (s && (s.updated || 0) > (conv.updated || 0)) {
+        const { conv: fresh } = await loadConv(conv.id);
+        if (fresh && fresh.id === conv.id && !busy) { conv = fresh; renderChat(); }
+      }
+    }
   } catch {}
 }
+function startHistorySync() {
+  clearInterval(syncTimer);
+  syncTimer = setInterval(() => {
+    if (document.visibilityState === 'visible' && !busy) syncIndex();
+  }, 20_000);
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !busy) syncIndex(); });
+addEventListener('focus', () => { if (!busy) syncIndex(); });
+addEventListener('online', () => { if (!busy) syncIndex(); });
+
 function newConv() {
   if (busy) return;
   conv = null; pending = []; renderPending(); renderChat(); renderList();
@@ -521,27 +579,31 @@ function newConv() {
 }
 async function openConv(id) {
   if (busy) return;
-  const c = await loadConv(id);
-  if (!c) { toast('Conversation introuvable'); index = index.filter((x) => x.id !== id); saveIndex(); renderList(); return; }
+  const { conv: c, serverChecked } = await loadConv(id);
+  if (!c) {
+    toast(serverChecked ? 'Conversation introuvable' : 'Erreur réseau — réessaie');
+    if (serverChecked) { index = index.filter((x) => x.id !== id); saveIndex(); renderList(); }
+    return;
+  }
   conv = c; renderChat(); renderList();
   history.replaceState(null, '', '#' + id);
   if (innerWidth < 860) $('#side').classList.add('hidden');
 }
 async function deleteConv(id) {
   if (!confirm('Supprimer cette conversation ?')) return;
-  index = index.filter((x) => x.id !== id); saveIndex(); LS.del('conv:' + id);
+  index = index.filter((x) => x.id !== id); saveIndex(); LS.del('conv:' + id); dirtySync.delete(id);
   if (cfg.sync) api('/api/convs?id=' + encodeURIComponent(id), { method: 'DELETE' }).catch(() => {});
   if (conv?.id === id) newConv(); else renderList();
 }
 async function renameConv(id) {
   const e = index.find((x) => x.id === id); if (!e) return;
   const t = prompt('Nouveau titre', e.title); if (!t) return;
-  const c = conv?.id === id ? conv : await loadConv(id); if (!c) return;
-  c.title = t.trim(); storeConv(c); if (conv?.id === id) $('#convTitle').textContent = c.title;
+  const c = conv?.id === id ? conv : (await loadConv(id)).conv; if (!c) return;
+  c.title = t.trim(); c.updated = Date.now(); storeConv(c, true); if (conv?.id === id) $('#convTitle').textContent = c.title;
 }
 async function togglePin(id) {
-  const c = conv?.id === id ? conv : await loadConv(id); if (!c) return;
-  c.pinned = !c.pinned; storeConv(c);
+  const c = conv?.id === id ? conv : (await loadConv(id)).conv; if (!c) return;
+  c.pinned = !c.pinned; c.updated = Date.now(); storeConv(c, true);
 }
 
 function groupOf(t) {
@@ -1048,8 +1110,19 @@ $('#cvAsk').onclick = () => {
   };
 })();
 
-// ---------- a video arrives after a while of work ----------
+// ---------- playlist & video gift ----------
+const TRACKS = [
+  { title: 'Cua cuaaa 🫂❤️', sub: 'notre chanson', src: '/media/cuacua-9c3cfb7b1357.mp4', video: true },
+  { title: 'Birds of a Feather', sub: 'Billie Eilish', src: '/media/birds-of-a-feather.mp3' },
+  { title: 'Ocean Eyes', sub: 'Billie Eilish', src: '/media/ocean-eyes.aac' },
+  { title: 'Alf Leila We Leila', sub: 'Georges Wassouf', src: '/media/alf-leila-we-leila.mp3' },
+  { title: 'Koki & Mimi 🐱', sub: 'notre vibe', src: '/media/koki-w-mimi.mp3' },
+];
 const vid = $('#vid');
+const aud = $('#aud');
+let trackIdx = Math.min(Math.max(0, +LS.get('trackIdx', 0) || 0), TRACKS.length - 1);
+const curTrack = () => TRACKS[trackIdx];
+const curMedia = () => (curTrack().video ? vid : aud);
 function showTune() { $('#tune').classList.add('on'); }
 function receiveGift() {
   LS.set('giftGot', true); LS.set('giftShown', true); showTune();
@@ -1059,17 +1132,57 @@ function receiveGift() {
   document.body.appendChild(n);
   n.querySelector('button').onclick = () => { LS.set('giftOpened', true); n.remove(); openVideo(); };
 }
-function paintTune() {
-  const playing = !vid.paused;
-  $('#tune').classList.toggle('playing', playing);
-  $('#tPlay').textContent = playing ? '❚❚' : '▶';
-  $('#tState').textContent = playing ? ($('#vbox').classList.contains('show') ? 'en vidéo' : 'en musique') : 'notre chanson';
+function loadTrack(idx, autoplay) {
+  vid.pause(); aud.pause();
+  trackIdx = ((idx % TRACKS.length) + TRACKS.length) % TRACKS.length;
+  LS.set('trackIdx', trackIdx);
+  const t = curTrack();
+  if (!t.video) {
+    $('#vbox').classList.remove('show');
+    if (aud.getAttribute('src') !== t.src) aud.src = t.src;
+  }
+  const m = curMedia();
+  m.currentTime = 0;
+  paintTune();
+  if (autoplay) m.play().catch(() => {});
 }
-function openVideo() { $('#vbox').classList.add('show'); vid.play().catch(() => {}); }
-$('#tPlay').onclick = () => { if (vid.paused) vid.play().catch(() => {}); else vid.pause(); };
-$('#tVid').onclick = () => $('#vbox').classList.contains('show') ? $('#vbox').classList.remove('show') : openVideo();
-$('#vClose').onclick = () => $('#vbox').classList.remove('show'); // keeps playing as music
-['play', 'pause', 'ended'].forEach((e) => vid.addEventListener(e, paintTune));
+function paintTune() {
+  const t = curTrack();
+  const m = curMedia();
+  const playing = !m.paused;
+  $('#tune').classList.toggle('playing', playing);
+  $('#tTitle').textContent = t.title;
+  $('#tPlay').textContent = playing ? '❚❚' : '▶';
+  $('#tPlay').title = playing ? 'Pause' : 'Écouter';
+  $('#tVid').hidden = !t.video;
+  const state = playing ? (t.video && $('#vbox').classList.contains('show') ? 'en vidéo' : 'en musique') : t.sub;
+  $('#tState').textContent = `${state} · ${trackIdx + 1}/${TRACKS.length}`;
+}
+function openVideo() {
+  if (!curTrack().video) loadTrack(0, false);
+  $('#vbox').classList.add('show');
+  vid.play().catch(() => {});
+  paintTune();
+}
+$('#tPlay').onclick = () => {
+  const t = curTrack();
+  if (!t.video && aud.getAttribute('src') !== t.src) aud.src = t.src;
+  const m = curMedia();
+  if (m.paused) m.play().catch(() => {}); else m.pause();
+};
+$('#tNext').onclick = () => loadTrack(trackIdx + 1, true);
+$('#tVid').onclick = () => {
+  if (!curTrack().video) return;
+  if ($('#vbox').classList.contains('show')) { $('#vbox').classList.remove('show'); paintTune(); }
+  else openVideo();
+};
+$('#vClose').onclick = () => { $('#vbox').classList.remove('show'); paintTune(); }; // keeps playing as music
+for (const m of [vid, aud]) {
+  m.addEventListener('play', () => { paintTune(); heartsOn(true); });
+  m.addEventListener('pause', () => { paintTune(); heartsOn(!vid.paused || !aud.paused); });
+  m.addEventListener('ended', () => loadTrack(trackIdx + 1, true));
+}
+paintTune();
 // gift note: first visit after 90 s, later visits straight away, until she clicks "Ouvrir" (#cadeau = straight away)
 if (location.hash === '#cadeau') receiveGift();
 else if (!LS.get('giftOpened', false)) { showTune(); setTimeout(receiveGift, LS.get('giftShown', false) ? 0 : 90000); }
@@ -1115,9 +1228,6 @@ function heartsOn(on) {
     h.addEventListener('animationend', () => h.remove());
   }, 750);
 }
-vid.addEventListener('play', () => heartsOn(true));
-vid.addEventListener('pause', () => heartsOn(false));
-vid.addEventListener('ended', () => heartsOn(false));
 
 // ---------- Fable: for the big moments ----------
 let opusShown = false;
@@ -1216,6 +1326,7 @@ async function boot() {
     if (!cfg.hasKey) toast('Clé API manquante sur le serveur');
     window.MimiProfiles?.onBootSuccess();
     await syncIndex();
+    startHistorySync();
     const h = location.hash.slice(1); if (h && !conv) openConv(h);
   } catch {}
 }
