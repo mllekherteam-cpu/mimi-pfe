@@ -344,6 +344,35 @@ button,a,.conv,.fitem,.ditem,.pill,.iconbtn{touch-action:manipulation;-webkit-ta
   .ftools .meta{display:none}
 }
 body:not(.ready) #side{transition:none}
+
+/* ---------- Night mode & Focus mode ---------- */
+body.night{
+  --bg:#161114; --side:#1d161a; --panel:#241c20; --ink:#f3e8eb; --mute:#a9969d; --line:#35292f;
+  --accent:#e0829a; --accent-2:#38222b; --user:#322229; --danger:#e06c5c;
+  background:radial-gradient(1200px 700px at 85% 110%,#2b1921 0%,transparent 60%),radial-gradient(900px 600px at 0% -10%,#261b1e 0%,transparent 55%),var(--bg);
+}
+body.night.inlove{background-color:#1e1318}
+body.night .conv:hover,body.night .ghost:hover,body.night .fitem:hover,body.night .ditem:hover,body.night .menu button:hover{background:#2d2227}
+body.night .conv.active{background:#382830}
+body.night .iconbtn:hover,body.night .pill:hover,body.night .actions button:hover{background:#2f2329}
+body.night .btn-new:hover,body.night .starters button:hover{border-color:#5b3d48}
+body.night #tune,body.night #ghzala,body.night .d-bubble,body.night .d-grid button,body.night .d-chips button,body.night .d-seg button,body.night .giftcard,body.night #giftNote,body.night #yay .ycard,body.night #gzSad .gzcard,body.night #canvas,body.night .modal input,body.night .modal textarea,body.night .modal select{background:var(--panel);color:var(--ink)}
+body.night #tune button:hover{background:#492c37}
+body.night .msg.ai .body code,body.night .msg.ai .body th{background:#2e2328}
+body.night .msg.ai .body blockquote{color:#c5b3b9}
+body.night .err{background:#3a1f22}
+body.night #notesBar{background:rgba(36,28,32,.92)}
+body.night #gift,body.night #yay{background:rgba(16,10,14,.65)}
+body.night .giftcard .q{color:#f0b5c4}
+body.night .composer{box-shadow:0 2px 18px rgba(0,0,0,.35)}
+@media (max-width:860px){body.night .topbar{background:rgba(22,17,20,.86);border-bottom-color:rgba(53,41,47,.85)}}
+#themeBtn{position:relative}
+#themeBtn.focus-on{background:var(--accent-2);color:var(--accent)}
+#tune.focus-mode{border-color:var(--accent)}
+#ytHost{position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden}
+.theme-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.theme-seg button{padding:8px 10px;border-radius:10px;border:1px solid var(--line);font-size:13.5px;background:var(--panel);color:var(--ink)}
+.theme-seg button.on{background:var(--accent-2);border-color:var(--accent);color:var(--accent);font-weight:600}
 </style>
 </head>
 <body>
@@ -371,6 +400,7 @@ body:not(.ready) #side{transition:none}
     <button class="iconbtn" id="toggleSide" title="Historique"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
     <div class="title" id="convTitle" title="Cliquer pour renommer"></div>
     <div id="presenceBar"></div>
+    <button class="iconbtn" id="themeBtn" title="Mode jour / nuit & Focus" aria-label="Mode jour / nuit & Focus"><svg class="icon" id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
     <button id="flowerBtn" title="🌷"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f490/512.webp" alt="💐" onerror="this.replaceWith('💐')"></button>
     <button class="iconbtn" id="exportBtn" title="Exporter (Markdown)"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></button>
     <button class="iconbtn" id="docsBtn" title="Documents & Google Docs"><svg class="icon" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></button>
@@ -437,6 +467,7 @@ body:not(.ready) #side{transition:none}
 <div class="toast" id="toast"></div>
 <div id="vbox"><video id="vid" src="/media/cuacua-9c3cfb7b1357.mp4" preload="none" playsinline controls></video><button class="vx" id="vClose" title="Fermer">✕</button></div>
 <audio id="aud" preload="none"></audio>
+<div id="ytHost" aria-hidden="true"><div id="ytPlayer"></div></div>
 <div id="fawn" aria-hidden="true"></div>
 <div id="fromOmar" title="🤍">Made by Omar with love ❤️</div>
 
@@ -1110,7 +1141,7 @@ $('#cvAsk').onclick = () => {
   };
 })();
 
-// ---------- playlist & video gift ----------
+// ---------- playlist, Focus mode & video gift ----------
 const TRACKS = [
   { title: 'Cua cuaaa 🫂❤️', sub: 'notre chanson', src: '/media/cuacua-9c3cfb7b1357.mp4', video: true },
   { title: 'Birds of a Feather', sub: 'Billie Eilish', src: '/media/birds-of-a-feather.mp3' },
@@ -1119,12 +1150,81 @@ const TRACKS = [
   { title: 'Koki & Mimi 🐱', sub: 'notre vibe', src: '/media/koki-w-mimi.mp3' },
   { title: 'Angel by the Wings', sub: 'Sia', src: '/media/angel-by-the-wings.mp3' },
   { title: 'Watch', sub: 'Billie Eilish', src: '/media/watch.mp3' },
+  { title: 'Sailor Song', sub: 'Gigi Perez', src: '/media/sailor-song.aac' },
+  { title: 'Orbiter', sub: 'Noah Kahan', src: '/media/orbiter.aac' },
+  { title: 'Got It In You', sub: 'BANNERS', src: '/media/got-it-in-you.mp3' },
+];
+const FOCUS_TRACKS = [
+  { title: 'Time to Think', sub: 'Cello & Piano · Focus', yt: 'wfu1UdWpPrU' },
+  { title: 'Dark Academia Rain', sub: 'Piano & Pluie · Focus', yt: 'DCt-k9DCWsQ' },
+  { title: 'Deep Focus', sub: 'Néoclassique · Focus', yt: 'Cx2QVmxVI4M' },
 ];
 const vid = $('#vid');
 const aud = $('#aud');
+let focusMode = !!LS.get('focusMode', false);
 let trackIdx = Math.min(Math.max(0, +LS.get('trackIdx', 0) || 0), TRACKS.length - 1);
-const curTrack = () => TRACKS[trackIdx];
-const curMedia = () => (curTrack().video ? vid : aud);
+let focusIdx = Math.min(Math.max(0, +LS.get('focusIdx', 0) || 0), FOCUS_TRACKS.length - 1);
+const activeTracks = () => (focusMode ? FOCUS_TRACKS : TRACKS);
+const activeIdx = () => (focusMode ? focusIdx : trackIdx);
+const curTrack = () => activeTracks()[activeIdx()];
+
+// hidden background audio stream for Focus mode tracks
+let ytPlayer = null, ytReady = false, ytPlaying = false, ytLoadedId = '', ytPending = null, ytApiRequested = false;
+function ensureYt() {
+  if (ytPlayer || ytApiRequested) return;
+  ytApiRequested = true;
+  const init = () => {
+    if (ytPlayer || !window.YT || !window.YT.Player) return;
+    ytPlayer = new YT.Player('ytPlayer', {
+      width: '1', height: '1', videoId: FOCUS_TRACKS[focusIdx].yt,
+      playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, modestbranding: 1, playsinline: 1, rel: 0, origin: location.origin },
+      events: {
+        onReady() {
+          ytReady = true;
+          ytLoadedId = FOCUS_TRACKS[focusIdx].yt;
+          if (ytPending) {
+            const p = ytPending; ytPending = null;
+            if (p.play) ytPlayId(p.id, p.restart);
+            else ytPause();
+          }
+        },
+        onStateChange(e) {
+          const st = e.data;
+          if (st === 1) { ytPlaying = true; paintTune(); }
+          else if (st === 2) { ytPlaying = false; paintTune(); }
+          else if (st === 0) { ytPlaying = false; if (focusMode) loadTrack(focusIdx + 1, true); else paintTune(); }
+        },
+      },
+    });
+  };
+  if (window.YT && window.YT.Player) init();
+  else {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { prev?.(); init(); };
+    const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.async = true;
+    document.head.appendChild(s);
+  }
+}
+function ytPlayId(id, restart) {
+  ensureYt();
+  if (!ytReady) { ytPending = { id, play: true, restart }; ytPlaying = true; paintTune(); return; }
+  ytPlaying = true;
+  if (ytLoadedId !== id || restart) { ytLoadedId = id; ytPlayer.loadVideoById(id); }
+  else ytPlayer.playVideo();
+  paintTune();
+}
+function ytPause() {
+  ytPending = null; ytPlaying = false;
+  if (ytReady && ytPlayer) { try { ytPlayer.pauseVideo(); } catch {} }
+}
+ensureYt();
+
+function stopAllAudio() { vid.pause(); aud.pause(); ytPause(); heartsOn(false); }
+function isAnyPlaying() {
+  const t = curTrack();
+  if (t.yt) return ytPlaying;
+  return !(t.video ? vid : aud).paused;
+}
 function showTune() { $('#tune').classList.add('on'); }
 function receiveGift() {
   LS.set('giftGot', true); LS.set('giftShown', true); showTune();
@@ -1135,32 +1235,49 @@ function receiveGift() {
   n.querySelector('button').onclick = () => { LS.set('giftOpened', true); n.remove(); openVideo(); };
 }
 function loadTrack(idx, autoplay) {
-  vid.pause(); aud.pause();
-  trackIdx = ((idx % TRACKS.length) + TRACKS.length) % TRACKS.length;
-  LS.set('trackIdx', trackIdx);
+  stopAllAudio();
+  const list = activeTracks();
+  const next = ((idx % list.length) + list.length) % list.length;
+  if (focusMode) { focusIdx = next; LS.set('focusIdx', focusIdx); }
+  else { trackIdx = next; LS.set('trackIdx', trackIdx); }
   const t = curTrack();
-  if (!t.video) {
-    $('#vbox').classList.remove('show');
-    if (aud.getAttribute('src') !== t.src) aud.src = t.src;
+  if (!t.video) $('#vbox').classList.remove('show');
+  if (t.yt) {
+    paintTune();
+    if (autoplay) ytPlayId(t.yt, true);
+    return;
   }
-  const m = curMedia();
+  if (!t.video && aud.getAttribute('src') !== t.src) aud.src = t.src;
+  const m = t.video ? vid : aud;
   m.currentTime = 0;
   paintTune();
   if (autoplay) m.play().catch(() => {});
 }
+function setFocusMode(on, autoplay) {
+  const changed = focusMode !== !!on;
+  focusMode = !!on;
+  LS.set('focusMode', focusMode);
+  document.body.classList.toggle('focus', focusMode);
+  $('#themeBtn')?.classList.toggle('focus-on', focusMode);
+  $('#tune').classList.toggle('focus-mode', focusMode);
+  if (changed || autoplay) loadTrack(activeIdx(), !!autoplay);
+  else paintTune();
+}
 function paintTune() {
   const t = curTrack();
-  const m = curMedia();
-  const playing = !m.paused;
+  const list = activeTracks();
+  const playing = isAnyPlaying();
   $('#tune').classList.toggle('playing', playing);
+  $('#tune').classList.toggle('focus-mode', focusMode);
   $('#tTitle').textContent = t.title;
   $('#tPlay').textContent = playing ? '❚❚' : '▶';
   $('#tPlay').title = playing ? 'Pause' : 'Écouter';
   $('#tVid').hidden = !t.video;
-  const state = playing ? (t.video && $('#vbox').classList.contains('show') ? 'en vidéo' : 'en musique') : t.sub;
-  $('#tState').textContent = `${state} · ${trackIdx + 1}/${TRACKS.length}`;
+  const state = playing ? (t.video && $('#vbox').classList.contains('show') ? 'en vidéo' : (focusMode ? 'focus' : 'en musique')) : t.sub;
+  $('#tState').textContent = `${state} · ${activeIdx() + 1}/${list.length}`;
 }
 function openVideo() {
+  if (focusMode) setFocusMode(false, false);
   if (!curTrack().video) loadTrack(0, false);
   $('#vbox').classList.add('show');
   vid.play().catch(() => {});
@@ -1168,11 +1285,17 @@ function openVideo() {
 }
 $('#tPlay').onclick = () => {
   const t = curTrack();
+  if (t.yt) {
+    if (ytPlaying) { ytPause(); paintTune(); }
+    else { vid.pause(); aud.pause(); ytPlayId(t.yt, false); }
+    return;
+  }
+  ytPause();
   if (!t.video && aud.getAttribute('src') !== t.src) aud.src = t.src;
-  const m = curMedia();
+  const m = t.video ? vid : aud;
   if (m.paused) m.play().catch(() => {}); else m.pause();
 };
-$('#tNext').onclick = () => loadTrack(trackIdx + 1, true);
+$('#tNext').onclick = () => loadTrack(activeIdx() + 1, true);
 $('#tVid').onclick = () => {
   if (!curTrack().video) return;
   if ($('#vbox').classList.contains('show')) { $('#vbox').classList.remove('show'); paintTune(); }
@@ -1180,15 +1303,58 @@ $('#tVid').onclick = () => {
 };
 $('#vClose').onclick = () => { $('#vbox').classList.remove('show'); paintTune(); }; // keeps playing as music
 for (const m of [vid, aud]) {
-  m.addEventListener('play', () => { paintTune(); heartsOn(true); });
-  m.addEventListener('pause', () => { paintTune(); heartsOn(!vid.paused || !aud.paused); });
-  m.addEventListener('ended', () => loadTrack(trackIdx + 1, true));
+  m.addEventListener('play', () => { paintTune(); if (!focusMode) heartsOn(true); });
+  m.addEventListener('pause', () => { paintTune(); heartsOn(!focusMode && (!vid.paused || !aud.paused)); });
+  m.addEventListener('ended', () => loadTrack(activeIdx() + 1, true));
 }
+document.body.classList.toggle('focus', focusMode);
+$('#themeBtn')?.classList.toggle('focus-on', focusMode);
 paintTune();
 // gift note: first visit after 90 s, later visits straight away, until she clicks "Ouvrir" (#cadeau = straight away)
 if (location.hash === '#cadeau') receiveGift();
 else if (!LS.get('giftOpened', false)) { showTune(); setTimeout(receiveGift, LS.get('giftShown', false) ? 0 : 90000); }
 else showTune();
+
+// ---------- Day / Night auto theme + Focus prompt ----------
+let themePref = LS.get('themePref', 'auto'); // 'auto' | 'day' | 'night'
+const isNightHour = () => { const h = new Date().getHours(); return h >= 19 || h < 7; };
+function applyTheme() {
+  const night = themePref === 'night' || (themePref === 'auto' && isNightHour());
+  document.body.classList.toggle('night', night);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', night ? '#161114' : '#fcf7f4');
+  const ic = $('#themeIcon');
+  if (ic) ic.innerHTML = night
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'
+    : '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+}
+applyTheme();
+setInterval(applyTheme, 60000);
+$('#themeBtn').onclick = () => {
+  const bg = modal(`<div style="text-align:center">
+    <h2 style="margin-top:2px">${focusMode ? 'Mode Focus actif 🎧' : 'Passer en mode Focus ?'}</h2>
+    <p style="font-size:14px;line-height:1.5">${focusMode ? 'Ambiance calme et musique de concentration activées.' : 'Lance une musique douce de concentration et calme l’écran pour travailler sereinement.'}</p>
+    <div style="margin:14px 0 16px"><button type="button" class="solid" id="toggleFocusBtn" style="padding:9px 18px;font-weight:500">${focusMode ? 'Quitter le mode Focus' : '🎧 Passer en mode Focus'}</button></div>
+    <label style="text-align:left;margin-top:10px">Apparence (suit automatiquement le jour et la nuit)</label>
+    <div class="theme-seg">
+      <button type="button" data-th="day" class="${themePref === 'day' ? 'on' : ''}">☀️ Jour</button>
+      <button type="button" data-th="night" class="${themePref === 'night' ? 'on' : ''}">🌙 Nuit</button>
+      <button type="button" data-th="auto" class="${themePref === 'auto' ? 'on' : ''}">✨ Auto</button>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:16px"><button class="ghost" data-cancel>Fermer</button></div>
+  </div>`, () => {});
+  bg.querySelector('#toggleFocusBtn').onclick = () => {
+    const next = !focusMode;
+    setFocusMode(next, next);
+    toast(next ? 'Mode Focus activé 🎧' : 'Retour aux chansons habituelles');
+    bg.remove();
+  };
+  bg.querySelectorAll('[data-th]').forEach((b) => b.onclick = () => {
+    themePref = b.dataset.th;
+    LS.set('themePref', themePref);
+    applyTheme();
+    bg.querySelectorAll('[data-th]').forEach((x) => x.classList.toggle('on', x === b));
+  });
+};
 
 // ---------- out of credit: a gentle "do you need more?" ----------
 const ASK_MORE = ['Tu en veux encore ?', 'Tu as besoin de plus ?', 'Tu en veux encore, babe ?', 'On recharge pour toi ?'];
