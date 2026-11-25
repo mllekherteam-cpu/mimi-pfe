@@ -29,19 +29,19 @@ button{font:inherit;color:inherit;border:0;background:none}
 .emo{width:30px;height:30px;display:inline-flex;flex:none}
 .emo img{width:30px;height:30px;transition:transform .45s cubic-bezier(.3,1.6,.5,1),opacity .3s}
 .emo img.swap{transform:scale(.2) rotate(-20deg);opacity:0}
-.bwrap{position:relative;display:inline-block;height:28px;overflow:hidden;flex:1}
-#bPlain,#bLove{position:absolute;left:0;top:0;white-space:nowrap;transition:transform .7s cubic-bezier(.65,0,.35,1),opacity .7s}
+.bwrap{position:relative;display:inline-block;height:38px;overflow:hidden;flex:1;padding-left:4px;margin:-5px 0}
+#bPlain,#bLove{position:absolute;left:4px;top:5px;white-space:nowrap;transition:transform .7s cubic-bezier(.65,0,.35,1),opacity .7s}
 #bLove{transform:translateY(110%);opacity:0;display:flex;align-items:baseline;gap:7px}
 .brand.love #bPlain{transform:translateY(-110%);opacity:0}
 .brand.love #bLove{transform:translateY(0);opacity:1}
-.script{font-family:"Great Vibes",cursive;font-size:25px;color:var(--accent);line-height:1;clip-path:inset(-10% 100% -10% 0)}
+.script{font-family:"Great Vibes",cursive;font-size:25px;color:var(--accent);line-height:1.25;padding:0 4px 0 2px;clip-path:inset(-30% 100% -30% -10%)}
 .brand.love .script{animation:write 2.4s .5s cubic-bezier(.45,.05,.4,1) forwards}
-@keyframes write{to{clip-path:inset(-10% -5% -10% 0)}}
+@keyframes write{to{clip-path:inset(-30% -10% -30% -10%)}}
 #helloName{display:inline-block;transition:opacity .6s,transform .6s}
 #helloName.out{opacity:0;transform:translateY(-8px)}
 #fawn{position:fixed;right:26px;bottom:64px;width:170px;opacity:.16;pointer-events:none;z-index:0}
 #main{z-index:1}
-#fromOmar{position:fixed;right:14px;bottom:8px;font-family:var(--serif);font-style:italic;font-size:12px;color:#c58a98;opacity:.55;z-index:2;transition:opacity .3s;user-select:none}
+#fromOmar{position:fixed;right:14px;bottom:3px;font-family:var(--serif);font-style:italic;font-size:12px;color:#c58a98;opacity:.55;z-index:2;transition:opacity .3s;user-select:none}
 #fromOmar:hover{opacity:1}
 #fromOmar .full{display:none}
 #fromOmar:hover .full{display:inline}
@@ -136,7 +136,7 @@ a{color:var(--accent)}
 .starters small{color:var(--mute)}
 
 /* composer */
-.composer-wrap{padding:0 16px 16px;flex:none}
+.composer-wrap{padding:0 16px 24px;flex:none}
 .composer{max-width:780px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 1px 2px rgba(0,0,0,.03),0 6px 24px rgba(60,40,20,.06);padding:10px 10px 8px 14px}
 .composer.drag{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-2)}
 #pending{display:flex;flex-wrap:wrap;gap:6px}
@@ -192,6 +192,40 @@ select.pill:hover{background-color:#fbefed}
 #docs.previewing #docList,#docs.previewing #dtabs{display:none}
 #docs.previewing #filePrev{display:flex}
 #docs.viewing #docList,#docs.viewing #dtabs{display:none}
+#docs{position:relative;z-index:3}
+#flowerBtn{width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:22px;transform-origin:50% 90%}
+#flowerBtn img{width:28px;height:28px;pointer-events:none}
+#flowerBtn:hover{background:var(--accent-2)}
+#flowerBtn.sway{animation:sway 2.4s ease-in-out}
+@keyframes sway{0%,100%{transform:rotate(0)}15%{transform:rotate(-14deg) scale(1.08)}35%{transform:rotate(11deg) scale(1.08)}55%{transform:rotate(-7deg)}75%{transform:rotate(4deg)}}
+#gift{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;background:rgba(255,240,243,.55);backdrop-filter:blur(3px);animation:fadein .5s}
+@keyframes fadein{from{opacity:0}}
+.giftcard{position:relative;z-index:2;background:#fff;border-radius:24px;padding:26px 30px 22px;max-width:360px;width:calc(100% - 40px);text-align:center;box-shadow:0 20px 60px rgba(184,92,116,.25);animation:pop .7s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.6) translateY(30px);opacity:0}}
+.giftcard img{width:120px;height:120px}
+.giftcard .from{font-family:var(--font);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:6px 0 8px}
+.giftcard .q{font-family:"Great Vibes",cursive;font-size:30px;line-height:1.25;color:#7a3b4c;margin:0 0 14px;min-height:76px;display:flex;align-items:center;justify-content:center}
+.giftcard button{color:var(--mute);font-size:13px;padding:6px 12px;border-radius:9px}
+.giftcard button:hover{background:var(--accent-2)}
+.fall{position:fixed;top:-60px;z-index:1;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translate(var(--x),110vh) rotate(var(--r))}}
+.crow{flex-wrap:wrap}
+body.panel #fawn{display:none}
+#canvasWrap{display:none;flex:1;flex-direction:column;min-height:0}
+#docs.canvas #docList,#docs.canvas #dtabs,#docs.canvas #filePrev,#docs.canvas #frameWrap{display:none!important}
+#docs.canvas #canvasWrap{display:flex}
+#canvas{flex:1;overflow:auto;padding:28px 40px 60px;font-family:"Times New Roman",Times,serif;font-size:16px;line-height:1.6;outline:0;background:#fff}
+#canvas h1,#canvas h2,#canvas h3{font-family:"Times New Roman",Times,serif;line-height:1.3}
+#canvas table{border-collapse:collapse;margin:.8em 0}#canvas th,#canvas td{border:1px solid #bbb;padding:5px 8px}
+.artifact{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px 14px;margin:12px 0;cursor:var(--cursor-hand);font-family:var(--font);transition:border-color .2s,box-shadow .2s}
+.artifact:hover{border-color:#e3b3bf;box-shadow:0 4px 18px rgba(184,92,116,.1)}
+.artifact .aic{font-size:22px;width:40px;height:40px;border-radius:10px;background:var(--accent-2);display:flex;align-items:center;justify-content:center;flex:none}
+.artifact .ait{flex:1;min-width:0;display:flex;flex-direction:column}
+.artifact .ait b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;font-size:15px}
+.artifact small{color:var(--mute);font-size:12.5px}
+.artifact .aopen{font-size:13px;color:var(--accent);font-weight:500}
+#mic.rec{background:#fde3e8;color:var(--danger);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(232,142,163,.25)}}
 #docs.viewing #frameWrap{display:block}
 
 /* menus, modals */
@@ -246,13 +280,14 @@ select.pill:hover{background-color:#fbefed}
   <div class="topbar">
     <button class="iconbtn" id="toggleSide" title="Historique"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
     <div class="title" id="convTitle" title="Cliquer pour renommer"></div>
+    <button id="flowerBtn" title="🌷"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f490/512.webp" alt="💐" onerror="this.replaceWith('💐')"></button>
     <button class="iconbtn" id="exportBtn" title="Exporter (Markdown)"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></button>
     <button class="iconbtn" id="docsBtn" title="Documents & Google Docs"><svg class="icon" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></button>
   </div>
   <div id="scroll">
     <div id="empty">
       <svg class="fawn-hero" viewBox="0 0 200 190" aria-hidden="true"><use href="#fawnSym"/></svg>
-      <h1 id="hello">Bonjour <span id="helloName">Mimi</span> 🌸</h1>
+      <h1 id="hello">Bonjour <span id="helloName">Mimi</span> ❤️</h1>
       <p>Ton assistante pour le mémoire : eaux usées, boues, biogaz, rédaction, références.</p>
       <div class="starters" id="starters"></div>
     </div>
@@ -264,6 +299,7 @@ select.pill:hover{background-color:#fbefed}
       <textarea id="input" rows="1" placeholder="Écris ton message…  (Entrée pour envoyer, Maj+Entrée pour aller à la ligne)"></textarea>
       <div class="crow">
         <button class="pill" id="attach" title="Joindre un fichier (PDF, image, texte)"><svg class="icon" viewBox="0 0 24 24"><path d="m21 11-8.6 8.6a5 5 0 0 1-7-7L14 4a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.4-2.4L15.6 7"/></svg></button>
+        <button class="pill" id="mic" title="Dicter (parle, le texte s’écrit)"><svg class="icon" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
         <button class="pill" id="webBtn" title="Recherche web (articles, sources réelles)"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span class="lbl">Web</span></button>
         <span class="sp"></span>
         <select class="pill" id="effort" title="Réflexion">
@@ -294,6 +330,16 @@ select.pill:hover{background-color:#fbefed}
   <div class="tabs" id="dtabs"><button data-tab="files" class="on">📁 Projet</button><button data-tab="links">🔗 Liens & Google Docs</button></div>
   <div id="docList"></div>
   <div id="filePrev"><div class="ftools"><button class="solid" id="fAttach">Joindre à la conversation</button><button class="ghost" id="fDown">Télécharger</button><span id="fInfo" class="meta"></span></div><div id="fBody"></div></div>
+  <div id="canvasWrap">
+    <div class="ftools">
+      <button class="solid" id="cvRich" title="Colle ensuite dans Google Docs : titres, gras, listes et tableaux sont gardés">Copier pour Google Docs</button>
+      <button class="ghost" id="cvWord">⬇ Word</button>
+      <button class="ghost" id="cvSave">💾 Dans mon dossier</button>
+      <button class="ghost" id="cvAsk" title="Demander une modification de ce document">✨ Améliorer…</button>
+      <span class="meta" id="cvInfo">Tu peux modifier le texte directement.</span>
+    </div>
+    <div id="canvas" contenteditable="true" spellcheck="true" lang="fr"></div>
+  </div>
   <div id="frameWrap"><iframe id="docFrame" allow="clipboard-read; clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
 </aside>
 
@@ -328,7 +374,7 @@ select.pill:hover{background-color:#fbefed}
   </symbol>
 </svg>
 <svg id="fawn" viewBox="0 0 200 190" aria-hidden="true"><use href="#fawnSym"/></svg>
-<div id="fromOmar" title="🤍">De la part d’Omar<span class="full"> — avec toute son affection, et beaucoup de courage pour la dernière ligne droite</span> 🤍</div>
+<div id="fromOmar" title="🤍">Made by Omar with love ❤️</div>
 
 <script>
 // ---------- helpers ----------
@@ -478,8 +524,16 @@ function closeMenu() { $('#menu')?.remove(); }
 
 // ---------- rendering ----------
 marked.setOptions({ breaks: true, gfm: true });
+// <document titre="…">…</document> blocks become cards that open in the editor (like artifacts)
+const DOC_RE = /<document(?:\s+titre="([^"]*)")?\s*>([\s\S]*?)(<\/document>|$)/g;
+function docsIn(text) { const out = []; let m; DOC_RE.lastIndex = 0; while ((m = DOC_RE.exec(text || ''))) out.push({ title: m[1] || 'Document', body: m[2].trim(), done: !!m[3] }); return out; }
 function md(text) {
-  const html = DOMPurify.sanitize(marked.parse(text || ''), { ADD_ATTR: ['target'] });
+  let k = 0;
+  const withCards = String(text || '').replace(DOC_RE, (_, t, body, end) => {
+    const words = body.trim().split(/\s+/).filter(Boolean).length;
+    return `\n\n<div class="artifact" data-k="${k++}"><div class="aic">📄</div><div class="ait"><b>${esc(t || 'Document')}</b><small>${end ? words + ' mots · clique pour ouvrir, modifier, copier' : 'en cours d’écriture…'}</small></div><span class="aopen">${end ? 'Ouvrir' : '<span class="dots"><i></i><i></i><i></i></span>'}</span></div>\n\n`;
+  });
+  const html = DOMPurify.sanitize(marked.parse(withCards), { ADD_ATTR: ['target'] });
   const div = document.createElement('div'); div.innerHTML = html;
   for (const a of div.querySelectorAll('a[href]')) {
     a.target = '_blank'; a.rel = 'noopener';
@@ -515,7 +569,7 @@ function msgHtml(m, i, isLast) {
   const err = m.error ? `<div class="err">${esc(m.error)}</div>` : '';
   const meta = m.model ? `<span class="meta">${MODEL_NAME[m.model] || ''}</span>` : '';
   return `<div class="msg ai ${isLast ? 'last' : ''}" data-i="${i}"><div class="body">${md(m.text)}</div>${src}${err}
-    <div class="actions"><button data-act="copy" title="Copier">${ICON.copy}</button>${isLast ? `<button data-act="retry" title="Régénérer">${ICON.retry}</button>` : ''}<button data-act="save" title="Enregistrer dans le dossier projet">${ICON.file}</button>${meta}</div></div>`;
+    <div class="actions"><button data-act="copy" title="Copier le texte">${ICON.copy}</button><button data-act="rich" title="Copier pour Google Docs / Word (avec la mise en forme)">${ICON.doc.replace('width:13px;height:13px', 'width:18px;height:18px')}</button>${isLast ? `<button data-act="retry" title="Régénérer">${ICON.retry}</button>` : ''}<button data-act="save" title="Enregistrer dans le dossier projet">${ICON.file}</button>${meta}</div></div>`;
 }
 function fmtUsd(x) { return x < 0.01 ? '< 0,01 $' : x.toFixed(2).replace('.', ',') + ' $'; }
 function scrollDown(force) {
@@ -524,10 +578,15 @@ function scrollDown(force) {
 }
 $('#msgs').addEventListener('click', async (e) => {
   const open = e.target.closest('[data-open]'); if (open) return openDoc({ url: open.dataset.open, title: 'Document' });
+  const art = e.target.closest('.artifact'); if (art) {
+    const el = art.closest('.msg'); const i = el.dataset.i != null ? +el.dataset.i : conv.messages.length - 1;
+    const d = docsIn(conv.messages[i]?.text)[+art.dataset.k]; if (d) openCanvas(d, i); return;
+  }
   const b = e.target.closest('[data-act]'); if (!b) return;
   const i = +b.closest('.msg').dataset.i; const m = conv.messages[i];
   if (b.dataset.act === 'copy') { await navigator.clipboard.writeText(m.text || ''); toast('Copié'); }
-  if (b.dataset.act === 'save') return saveAnswer(m.text || '');
+  if (b.dataset.act === 'save') return saveAnswer((m.text || '').replace(DOC_RE, (_, t, body) => body.trim()));
+  if (b.dataset.act === 'rich') { await copyRich(md((m.text || '').replace(DOC_RE, (_, t, body) => body.trim())), m.text || ''); return toast('Copié avec la mise en forme ✓'); }
   if (b.dataset.act === 'retry') { conv.messages.splice(i, 1); renderChat(); run(); }
   if (b.dataset.act === 'edit') {
     if (busy) return;
@@ -598,14 +657,18 @@ async function autoTitle(c, text) {
   try { const r = await api('/api/title', { method: 'POST', body: JSON.stringify({ text }) }); const j = await r.json();
     if (j.title) { c.title = j.title; storeConv(c); if (conv?.id === c.id) { $('#convTitle').textContent = c.title; document.title = c.title + ' · Mimi'; } } } catch {}
 }
-const STATUS = { thinking: 'thinking', searching: 'searching', writing: '' };
+const STATUS = { thinking: 'thinking', searching: 'searching', listing: 'listing', reading: 'reading', saving: 'saving', writing: '' };
 const WAIT = {
+  listing: ['Je regarde tes fichiers', 'Je cherche le bon fichier'],
+  reading: ['Je lis {f}', 'Je lis {f} attentivement', 'Je prends des notes sur {f}'],
+  saving: ['J’enregistre {f} dans ton dossier'],
   thinking: ['Je réfléchis pour toi', 'Une petite seconde, ça arrive', 'Je mets tout ça en ordre', 'Presque prêt, promis', 'Je relis pour que ce soit juste'],
   searching: ['Je cherche les meilleures sources', 'Je fouille les articles pour toi', 'Je vérifie que les références existent vraiment', 'Je trie les plus récentes'],
 };
 let waitTimer = 0;
-function setWait(el, kind) {
-  clearInterval(waitTimer); const list = WAIT[kind]; if (!list) return;
+function setWait(el, kind, file) {
+  clearInterval(waitTimer); let list = WAIT[kind]; if (!list) return;
+  list = list.map((s) => s.replace('{f}', file ? '« ' + file + ' »' : 'ton fichier'));
   let i = 0; el.textContent = list[0] + '…';
   waitTimer = setInterval(() => { i = (i + 1) % list.length; el.textContent = list[i] + '…'; }, 2600);
 }
@@ -645,8 +708,14 @@ async function run() {
       while ((nl = buf.indexOf('\n')) >= 0) {
         const line = buf.slice(0, nl); buf = buf.slice(nl + 1); if (!line) continue;
         const ev = JSON.parse(line);
-        if (ev.t === 'text') { ai.text += ev.v; status.style.display = 'none'; clearInterval(waitTimer); if (!raf) raf = requestAnimationFrame(paint); }
-        else if (ev.t === 'status') { if (STATUS[ev.v]) { status.style.display = ''; setWait(st, STATUS[ev.v]); } }
+        if (ev.t === 'text') {
+          ai.text += ev.v; if (ev.v.trim()) { status.style.display = 'none'; clearInterval(waitTimer); }
+          if (!raf) raf = requestAnimationFrame(paint);
+          const ds = docsIn(ai.text); const last = ds[ds.length - 1];
+          if (last?.done && !ai._opened?.[ds.length - 1] && innerWidth > 860) { (ai._opened ||= {})[ds.length - 1] = 1; openCanvas(last, c.messages.length - 1); }
+        }
+        else if (ev.t === 'status') { if (STATUS[ev.v]) { status.style.display = ''; setWait(st, STATUS[ev.v], ev.file); } }
+        else if (ev.t === 'saved') { toast('Enregistré dans ton dossier ✓'); if ($('#docs').classList.contains('open') && tab === 'files') renderFiles(); }
         else if (ev.t === 'sources') ai.sources = ev.v;
         else if (ev.t === 'error') ai.error = ev.v;
         else if (ev.t === 'done') { ai.cost = ev.cost; cfg.spent = ev.spent; cfg.budget = ev.budget; paintBudget(); }
@@ -690,9 +759,11 @@ async function renderFiles() {
   const parts = fdir ? fdir.split('/') : [];
   let crumbs = `<a data-dir="">📁 Projet</a>`; parts.forEach((p, i) => crumbs += ` / <a data-dir="${esc(parts.slice(0, i + 1).join('/'))}">${esc(p)}</a>`);
   L.innerHTML = `<div class="crumbs">${crumbs}</div>` + j.items.map((x) => `<div class="fitem" data-${x.type === 'dir' ? 'dir' : 'file'}="${esc(x.path)}">${x.type === 'dir' ? '📁' : IMG_EXT.test(x.name) ? '🖼️' : /\.pdf$/i.test(x.name) ? '📕' : /\.docx?$/i.test(x.name) ? '📘' : '📄'}<span class="n">${esc(x.name)}</span>${x.type === 'dir' ? '' : `<small>${kb(x.size)}</small>`}</div>`).join('') +
-    `<div class="addrow" style="margin-top:12px"><button class="solid" id="fUp">⬆ Ajouter des fichiers ici</button><button class="ghost" id="fNew">+ Nouvelle note</button></div>
+    `<div class="addrow" style="margin-top:12px"><button class="solid" id="fUp">⬆ Ajouter des fichiers ici</button><button class="ghost" id="fNew">+ Note</button><button class="ghost" id="fDir">+ Dossier</button></div>
      <p style="color:var(--mute);font-size:12px;margin:10px 2px">Ce dossier est partagé avec l’ordinateur d’Omar (GitHub). Ce que tu ajoutes ici, il le récupère ; ce qu’il pousse, tu le vois ici.</p>`;
   $('#fUp').onclick = () => { const f = document.createElement('input'); f.type = 'file'; f.multiple = true; f.onchange = () => uploadFiles(f.files); f.click(); };
+  $('#fDir').onclick = async () => { const n = prompt('Nom du nouveau dossier'); if (!n) return; const d = (fdir ? fdir + '/' : '') + n.replace(/[\\/:*?"<>|.]+/g, ' ').trim();
+    if (await saveToProject(d + '/Notes.md', textToB64('# ' + n + '\n\n'), 'Mimi : nouveau dossier ' + n)) { fdir = d; renderFiles(); } };
   $('#fNew').onclick = async () => { const n = prompt('Nom de la note', 'note.md'); if (!n) return; await saveToProject((fdir ? fdir + '/' : '') + n, textToB64('# ' + n.replace(/\.md$/, '') + '\n\n')); renderFiles(); };
 }
 $('#docList').addEventListener('click', (e) => {
@@ -701,7 +772,7 @@ $('#docList').addEventListener('click', (e) => {
 }, true);
 async function uploadFiles(list) {
   for (const f of list) {
-    if (f.size > 20e6) { toast(f.name + ' : trop lourd (max 20 Mo)'); continue; }
+    if (f.size > 3.2e6) { toast(f.name + ' : trop lourd pour le site (max 3 Mo). Envoie-le à Omar, il l’ajoutera.'); continue; }
     const data = await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.readAsDataURL(f); });
     toast('Envoi de ' + f.name + '…');
     await saveToProject((fdir ? fdir + '/' : '') + f.name, data);
@@ -714,7 +785,7 @@ async function saveToProject(path, b64, message) {
   toast(j.updated ? 'Fichier mis à jour ✓' : 'Enregistré dans le projet ✓'); return true;
 }
 async function previewFile(path) {
-  const p = $('#docs'); p.classList.add('previewing'); $('#docsBack').style.display = ''; $('#docsTitle').textContent = path.split('/').pop();
+  const p = $('#docs'); p.classList.add('previewing'); p.classList.remove('canvas'); $('#docsBack').style.display = ''; $('#docsTitle').textContent = path.split('/').pop();
   const B = $('#fBody'); B.className = ''; B.innerHTML = '<div class="status"><span class="dots"><i></i><i></i><i></i></span></div>';
   const j = await (await api('/api/files?path=' + encodeURIComponent(path))).json();
   if (j.error) { B.innerHTML = `<div class="err">${esc(j.error)}</div>`; return; }
@@ -771,17 +842,23 @@ function embedUrl(url) {
 }
 let currentDoc = null;
 function openDoc(d) {
-  const p = $('#docs'); p.classList.add('open', 'viewing'); p.classList.remove('previewing'); currentDoc = d;
+  const p = $('#docs'); p.classList.add('open', 'viewing'); p.classList.remove('previewing', 'canvas'); currentDoc = d;
   $('#docsTitle').textContent = d.title; $('#docsBack').style.display = ''; $('#docsExt').style.display = '';
   $('#docsExt').title = /docs\.google\.com/.test(d.url) ? 'Ouvrir pour modifier' : 'Ouvrir dans un nouvel onglet';
   $('#docFrame').src = embedUrl(d.url);
 }
-function openDocsList() { const p = $('#docs'); p.classList.add('open'); p.classList.remove('viewing', 'previewing'); $('#docsTitle').textContent = 'Projet & documents'; $('#docsBack').style.display = 'none'; $('#docsExt').style.display = 'none'; paintTabs(); }
+function openDocsList() { const p = $('#docs'); p.classList.add('open'); p.classList.remove('viewing', 'previewing', 'canvas'); $('#docsTitle').textContent = 'Projet & documents'; $('#docsBack').style.display = 'none'; $('#docsExt').style.display = 'none'; paintTabs(); }
 $('#docsBtn').onclick = () => $('#docs').classList.contains('open') ? $('#docs').classList.remove('open') : openDocsList();
 $('#openDocs').onclick = openDocsList;
 $('#docsBack').onclick = openDocsList;
 $('#docsClose').onclick = () => $('#docs').classList.remove('open');
-$('#docsExt').onclick = () => currentDoc && window.open(currentDoc.url, '_blank', 'noopener');
+// Google Docs opens as a real window on the right half of the screen: she edits there, the chat stays here
+$('#docsExt').onclick = () => {
+  if (!currentDoc) return;
+  const w = Math.round(screen.availWidth / 2), h = screen.availHeight;
+  const win = window.open(currentDoc.url, 'mimi_gdoc', `popup=yes,width=${w},height=${h},left=${screen.availWidth - w},top=0`);
+  if (!win) window.open(currentDoc.url, '_blank');
+};
 
 // ---------- sidebar, export, settings ----------
 $('#toggleSide').onclick = () => $('#side').classList.toggle('hidden');
@@ -829,6 +906,111 @@ const STARTERS = [
 ];
 $('#starters').innerHTML = STARTERS.map((s, i) => `<button data-st="${i}"><b>${s[0]}</b><small>${s[1]}</small></button>`).join('');
 $('#starters').onclick = (e) => { const b = e.target.closest('[data-st]'); if (!b) return; input.value = STARTERS[+b.dataset.st][2]; autosize(); input.focus(); input.setSelectionRange(input.value.length, input.value.length); };
+
+// when the side panel opens on a small screen, fold the history away to make room
+new MutationObserver(() => {
+  const open = $('#docs').classList.contains('open'); document.body.classList.toggle('panel', open);
+  if (open && innerWidth < 1250) $('#side').classList.add('hidden');
+}).observe($('#docs'), { attributes: true, attributeFilter: ['class'] });
+// ---------- document editor (artifacts) ----------
+let cvDoc = null;
+function openCanvas(d, msgIndex) {
+  cvDoc = { ...d, msgIndex };
+  const p = $('#docs'); p.classList.add('open', 'canvas'); p.classList.remove('viewing', 'previewing');
+  $('#docsTitle').textContent = '📄 ' + d.title; $('#docsBack').style.display = ''; $('#docsExt').style.display = 'none';
+  $('#canvas').innerHTML = md(d.body);
+  $('#canvas').querySelectorAll('.doclink').forEach((b) => b.remove());
+}
+async function copyRich(html, plain) {
+  const wrapped = `<div style="font-family:'Times New Roman';font-size:12pt">${html}</div>`;
+  try { await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([wrapped], { type: 'text/html' }), 'text/plain': new Blob([plain], { type: 'text/plain' }) })]); }
+  catch { const r = document.createRange(); const tmp = document.createElement('div'); tmp.innerHTML = wrapped; document.body.appendChild(tmp); r.selectNodeContents(tmp); const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); tmp.remove(); }
+}
+function htmlToMd(root) {
+  const out = [];
+  const inline = (n) => [...n.childNodes].map((c) => c.nodeType === 3 ? c.textContent : c.tagName === 'STRONG' || c.tagName === 'B' ? `**${inline(c)}**` : c.tagName === 'EM' || c.tagName === 'I' ? `*${inline(c)}*` : c.tagName === 'A' ? `[${inline(c)}](${c.href})` : c.tagName === 'BR' ? '\n' : inline(c)).join('');
+  for (const n of root.children) {
+    const t = n.tagName;
+    if (/^H[1-6]$/.test(t)) out.push('#'.repeat(+t[1]) + ' ' + inline(n).trim());
+    else if (t === 'UL' || t === 'OL') out.push([...n.children].map((li, i) => (t === 'OL' ? `${i + 1}. ` : '- ') + inline(li).trim()).join('\n'));
+    else if (t === 'TABLE') { const rows = [...n.querySelectorAll('tr')].map((tr) => '| ' + [...tr.children].map((c) => inline(c).trim()).join(' | ') + ' |'); if (rows.length) rows.splice(1, 0, rows[0].replace(/[^|]+/g, ' --- ')); out.push(rows.join('\n')); }
+    else if (t === 'BLOCKQUOTE') out.push('> ' + inline(n).trim());
+    else out.push(inline(n).trim());
+  }
+  return out.filter(Boolean).join('\n\n') + '\n';
+}
+$('#cvRich').onclick = async () => { await copyRich($('#canvas').innerHTML, $('#canvas').innerText); toast('Copié : colle-le dans Google Docs (Ctrl+V) ✓'); };
+$('#cvWord').onclick = () => {
+  const html = `<html><head><meta charset="utf-8"><style>body{font-family:'Times New Roman';font-size:12pt;line-height:1.5}table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style></head><body>${$('#canvas').innerHTML}</body></html>`;
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿', html], { type: 'application/msword' }));
+  a.download = (cvDoc?.title || 'document').replace(/[\\/:*?"<>|]+/g, '') + '.doc'; a.click();
+};
+$('#cvSave').onclick = async () => {
+  const def = 'Travail_Mimi/' + (cvDoc?.title || 'document').replace(/[\\/:*?"<>|]+/g, '') + '.md';
+  const path = prompt('Enregistrer dans ton dossier sous :', def); if (!path) return;
+  await saveToProject(path, textToB64(htmlToMd($('#canvas'))), 'Mimi : document enregistré');
+};
+$('#cvAsk').onclick = () => {
+  const what = prompt('Que veux-tu changer dans ce document ? (ex. : plus court, plus formel, ajoute des références…)'); if (!what) return;
+  input.value = `Voici la version actuelle du document « ${cvDoc?.title || ''} » :\n\n${htmlToMd($('#canvas'))}\n\nModifie-le ainsi : ${what}\n\nRenvoie le document complet.`;
+  autosize(); if (!busy) submit();
+};
+
+// ---------- dictation ----------
+(() => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { $('#mic').style.display = 'none'; return; }
+  let rec = null, base = '';
+  $('#mic').onclick = () => {
+    if (rec) { rec.stop(); return; }
+    rec = new SR(); rec.lang = settings.voiceLang || 'fr-FR'; rec.interimResults = true; rec.continuous = true;
+    base = input.value ? input.value.replace(/\s*$/, ' ') : '';
+    rec.onresult = (e) => { let s = ''; for (const r of e.results) s += r[0].transcript; input.value = base + s; autosize(); };
+    rec.onend = () => { rec = null; $('#mic').classList.remove('rec'); input.focus(); };
+    rec.onerror = (e) => { if (e.error === 'not-allowed') toast('Autorise le micro dans le navigateur'); };
+    rec.start(); $('#mic').classList.add('rec'); toast('Je t’écoute… (reclique pour arrêter)');
+  };
+})();
+
+// ---------- someone sent you flowers ----------
+const QUOTES = [
+  'Someone’s heart skipped a beat at your name today.',
+  'Someone is thinking about you right now.',
+  'Somewhere, someone is very proud of you.',
+  'Someone believes in you more than you know.',
+  'Your name made someone smile today.',
+  'Someone hopes today is gentle with you.',
+  'Someone thinks the world is softer because you’re in it.',
+  'Every page you write, someone is cheering for you.',
+  'Someone saved their sweetest thoughts for you.',
+  'Someone wishes they could bring you coffee right now.',
+  'You are someone’s favourite thought.',
+  'Someone thinks you’re doing amazing, even on the hard days.',
+];
+const BLOOMS = ['1f337', '1f339', '1f338', '1f33a', '1f33c', '1f490'];
+let lastQ = -1;
+function sendFlowers() {
+  if ($('#gift')) return;
+  let i; do { i = Math.floor(Math.random() * QUOTES.length); } while (i === lastQ); lastQ = i;
+  const g = document.createElement('div'); g.id = 'gift';
+  g.innerHTML = `<div class="giftcard"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/${BLOOMS[Math.floor(Math.random() * BLOOMS.length)]}/512.webp" alt="💐">
+    <div class="from">Someone just sent you flowers</div><div class="q">${QUOTES[i]}</div><button>thank you ❤️</button></div>`;
+  document.body.appendChild(g);
+  const E = ['🌷', '🌸', '🌹', '🌺', '💮', '🌼', '❤️'];
+  for (let k = 0; k < 34; k++) {
+    const f = document.createElement('span'); f.className = 'fall'; f.textContent = E[Math.floor(Math.random() * E.length)];
+    f.style.left = Math.random() * 100 + 'vw'; f.style.fontSize = 16 + Math.random() * 22 + 'px';
+    f.style.animationDuration = 4 + Math.random() * 4 + 's'; f.style.animationDelay = Math.random() * 2.5 + 's';
+    f.style.setProperty('--x', (Math.random() * 160 - 80) + 'px'); f.style.setProperty('--r', (Math.random() * 540 - 270) + 'deg');
+    g.appendChild(f);
+  }
+  const close = () => { g.style.transition = 'opacity .5s'; g.style.opacity = 0; setTimeout(() => g.remove(), 500); };
+  g.onclick = (e) => { if (e.target === g || e.target.tagName === 'BUTTON') close(); };
+}
+$('#flowerBtn').onclick = sendFlowers;
+// the little bouquet sways every so often, as if it just arrived
+setInterval(() => { const b = $('#flowerBtn'); b.classList.remove('sway'); void b.offsetWidth; b.classList.add('sway'); }, 22000 + Math.random() * 8000);
+setTimeout(() => $('#flowerBtn').classList.add('sway'), 3000);
 
 // ---------- little love notes (every 2 to 2.5 minutes) ----------
 const every = (fn) => { const go = () => setTimeout(() => { fn(); go(); }, 120000 + Math.random() * 30000); go(); };
