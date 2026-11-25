@@ -1062,17 +1062,15 @@ $('#cvAsk').onclick = () => {
 })();
 
 // ---------- a video arrives after a while of work ----------
-const GIFT_AFTER = 20 * 60; // seconds of active work
 const vid = $('#vid');
 function showTune() { $('#tune').classList.add('on'); }
 function receiveGift() {
-  LS.set('giftGot', true); showTune();
+  LS.set('giftGot', true); LS.set('giftShown', true); showTune();
   if ($('#giftNote')) return;
   const n = document.createElement('div'); n.id = 'giftNote';
   n.innerHTML = `<div class="gi">🎁</div><div><b>Tu as reçu une vidéo</b><small>Quelqu’un pense à toi pendant que tu travailles.</small><br><button>Ouvrir 💌</button></div>`;
   document.body.appendChild(n);
-  n.querySelector('button').onclick = () => { n.remove(); openVideo(); };
-  setTimeout(() => n.remove(), 60000);
+  n.querySelector('button').onclick = () => { LS.set('giftOpened', true); n.remove(); openVideo(); };
 }
 function paintTune() {
   const playing = !vid.paused;
@@ -1085,16 +1083,10 @@ $('#tPlay').onclick = () => { if (vid.paused) vid.play().catch(() => {}); else v
 $('#tVid').onclick = () => $('#vbox').classList.contains('show') ? $('#vbox').classList.remove('show') : openVideo();
 $('#vClose').onclick = () => $('#vbox').classList.remove('show'); // keeps playing as music
 ['play', 'pause', 'ended'].forEach((e) => vid.addEventListener(e, paintTune));
-if (LS.get('giftGot', false)) showTune();
-else {
-  let worked = LS.get('worked', 0), lastAct = Date.now();
-  ['keydown', 'click', 'scroll'].forEach((e) => addEventListener(e, () => { lastAct = Date.now(); }, { passive: true, capture: true }));
-  const tick = setInterval(() => {
-    if (document.visibilityState === 'visible' && Date.now() - lastAct < 3 * 60000) { worked += 15; LS.set('worked', worked); }
-    if (worked >= GIFT_AFTER) { clearInterval(tick); receiveGift(); }
-  }, 15000);
-}
+// gift note: first visit after 90 s, later visits straight away, until she clicks "Ouvrir" (#cadeau = straight away)
 if (location.hash === '#cadeau') receiveGift();
+else if (!LS.get('giftOpened', false)) { showTune(); setTimeout(receiveGift, LS.get('giftShown', false) ? 0 : 90000); }
+else showTune();
 
 // ---------- out of credit: a gentle "do you need more?" ----------
 const ASK_MORE = ['Tu en veux encore ?', 'Tu as besoin de plus ?', 'Tu en veux encore, babe ?', 'On recharge pour toi ?'];
@@ -1178,7 +1170,7 @@ function sendFlowers() {
   g.innerHTML = `<div class="giftcard"><button class="gx" title="Fermer">✕</button>
     <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/${BLOOMS[Math.floor(Math.random() * BLOOMS.length)]}/512.webp" alt="" onerror="this.outerHTML='<div style=&quot;font-size:96px;line-height:120px&quot;>💐</div>'">
     <div class="from">Someone just sent you flowers</div><div class="q">${quote}</div>
-    <div class="greply"><button class="g2" data-r="thank you sm">thank you sm</button><button class="g1" data-r="${reply}">${reply}</button></div></div>`;
+    <div class="greply"><button class="g1" data-r="${reply}">${reply}</button></div></div>`;
   document.body.appendChild(g);
   const E = ['🌷', '🌸', '🌹', '🌼', '💮', '❤️'];
   for (let k = 0; k < 34; k++) {
