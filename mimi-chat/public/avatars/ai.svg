@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7dce3"/>
+      <stop offset="100%" stop-color="#d88fa3"/>
+    </linearGradient>
+    <linearGradient id="head" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f3e6e9"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3a2d34"/>
+      <stop offset="100%" stop-color="#241b20"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" fill="url(#bg)"/>
+  <!-- Antenna -->
+  <line x1="64" y1="30" x2="64" y2="17" stroke="#8a5a68" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="64" cy="14" r="6" fill="#ffcf6e" stroke="#8a5a68" stroke-width="2.5"/>
+  <!-- Ears -->
+  <rect x="16" y="54" width="12" height="24" rx="6" fill="#b85c74"/>
+  <rect x="100" y="54" width="12" height="24" rx="6" fill="#b85c74"/>
+  <!-- Neck/Shoulders -->
+  <rect x="52" y="96" width="24" height="14" rx="4" fill="#a06f7d"/>
+  <path d="M30 128c2-15 16-23 34-23s32 8 34 23z" fill="#b85c74"/>
+  <!-- Head -->
+  <rect x="24" y="30" width="80" height="68" rx="22" fill="url(#head)" stroke="#b85c74" stroke-width="3.5"/>
+  <!-- Face visor -->
+  <rect x="34" y="44" width="60" height="38" rx="14" fill="url(#screen)"/>
+  <!-- Eyes -->
+  <circle cx="51" cy="60" r="6.5" fill="#7be8ff"/>
+  <circle cx="77" cy="60" r="6.5" fill="#7be8ff"/>
+  <circle cx="49" cy="58" r="2.2" fill="#ffffff"/>
+  <circle cx="75" cy="58" r="2.2" fill="#ffffff"/>
+  <!-- Rosy cheeks -->
+  <ellipse cx="43" cy="70" rx="4.5" ry="2.5" fill="#ff8ea8" opacity=".65"/>
+  <ellipse cx="85" cy="70" rx="4.5" ry="2.5" fill="#ff8ea8" opacity=".65"/>
+  <!-- Smile -->
+  <path d="M56 71c2.5 3.5 13.5 3.5 16 0" fill="none" stroke="#7be8ff" stroke-width="3" stroke-linecap="round"/>
+</svg>
