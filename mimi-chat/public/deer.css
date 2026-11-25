@@ -1,0 +1,84 @@
+/* Mimi's deer companion (deer.js) */
+.d-art{display:block;width:100%;height:auto;overflow:visible}
+.d-coat{fill:var(--d-coat)}
+.d-cream{fill:var(--d-cream)}
+.d-inner{fill:var(--d-inner)}
+.d-nose{fill:var(--d-nose)}
+.d-hoof{fill:var(--d-hoof)}
+.d-ink{fill:#33242a}
+.d-shade{fill:#3b1f14;opacity:.10}
+.d-line{fill:none;stroke:#3b2a2a;stroke-linecap:round}
+.d-antler{fill:none;stroke:var(--d-antler)}
+.d-acc{fill:var(--d-acc)}
+.d-acc2{fill:var(--d-acc2)}
+
+/* life: blink, breathe, ear twitch, heart float */
+.d-eyes{transform-box:fill-box;transform-origin:center;animation:d-blink 5.2s infinite}
+@keyframes d-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+.d-head{transform-box:view-box;transform-origin:100px 124px;animation:d-head 6s ease-in-out infinite}
+@keyframes d-head{0%,100%{transform:rotate(0)}50%{transform:rotate(-2.2deg)}}
+.d-body{transform-box:view-box;transform-origin:100px 187px;animation:d-breathe 3.6s ease-in-out infinite}
+@keyframes d-breathe{50%{transform:scale(1.015,1.025)}}
+.d-ears.twitch .d-ear{transform-box:view-box;transform-origin:66px 70px;animation:d-twitch .55s ease-in-out}
+.d-ears.twitch g .d-ear{animation-delay:.08s}
+@keyframes d-twitch{30%{transform:rotate(-9deg)}60%{transform:rotate(4deg)}}
+.d-heart{transform-box:fill-box;transform-origin:center;animation:d-float 3.2s ease-in-out infinite}
+.d-heart2{animation-delay:-1.4s}
+@keyframes d-float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.12)}}
+.d-art.hop{animation:d-hop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes d-hop{40%{transform:translateY(-14px) rotate(-3deg)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.d-eyes,.d-head,.d-body,.d-heart,.d-art.hop,.d-ears.twitch .d-ear{animation:none}}
+
+/* corner companion */
+#fawn{position:fixed;right:18px;bottom:148px;width:var(--d-size,115px);opacity:.18;pointer-events:none;z-index:0;transition:opacity .3s,width .3s}
+#fawn.side-left{right:auto;left:286px}
+#side.hidden ~ #fawn.side-left{left:18px}
+#fawn.mode-hidden{display:none}
+#fawn.mode-color{opacity:1;z-index:3;filter:drop-shadow(0 6px 10px rgba(120,60,70,.12))}
+#fawn.mode-color .d-art{pointer-events:auto;cursor:var(--cursor-hand)}
+#fawn.mode-ghost .d-art *{animation:none}
+.d-bubble{position:absolute;bottom:96%;right:12%;max-width:220px;background:#fff;border:1px solid var(--line,#efe0dc);border-radius:14px 14px 4px 14px;padding:8px 30px 8px 11px;font-size:13px;line-height:1.4;color:var(--ink,#2e2427);box-shadow:0 8px 20px rgba(0,0,0,.08);pointer-events:auto;animation:d-in .25s ease-out}
+#fawn.side-left .d-bubble{right:auto;left:12%;border-radius:14px 14px 14px 4px}
+.d-bubble[hidden]{display:none}
+.d-edit{position:absolute;right:5px;top:5px;font-size:12px;opacity:.6;padding:2px}
+.d-edit:hover{opacity:1}
+@keyframes d-in{from{opacity:0;transform:translateY(6px) scale(.95)}}
+.d-pop{position:fixed;pointer-events:none;z-index:90;font-size:16px;animation:d-pop 1.3s ease-out forwards}
+@keyframes d-pop{from{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}to{opacity:0;transform:translate(var(--dx),-70px) scale(1.1)}}
+@media (max-width:860px){#fawn{width:calc(var(--d-size,115px) * .72);bottom:146px;right:10px}#fawn.mode-ghost{opacity:.12}#fawn.side-left{left:10px}}
+
+/* welcome hero */
+#empty .fawn-hero{width:118px;margin:0 auto 6px;display:block;opacity:1;cursor:var(--cursor-hand)}
+#empty .fawn-hero:hover .d-art{transform:translateY(-3px);transition:transform .2s}
+
+/* customizer */
+.d-panel{max-width:760px!important;display:flex;gap:0;padding:0!important;overflow:hidden!important}
+.d-preview{flex:0 0 250px;background:radial-gradient(circle at 50% 60%,#fff 0%,#fbeef0 55%,#f6e2e6 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 16px}
+.d-preview .d-art{width:210px}
+.d-name{font-family:"Great Vibes",cursive;font-size:30px;color:var(--accent,#b85c74);min-height:40px;margin-top:4px;text-align:center}
+.d-opts{flex:1;display:flex;flex-direction:column;max-height:90vh;min-width:0}
+.d-scroll{flex:1;overflow:auto;padding:18px 22px 10px}
+.d-scroll label{margin:10px 0 4px}
+.d-foot{margin:0!important;padding:12px 22px 16px;border-top:1px solid var(--line,#efe0dc);background:var(--panel,#fff);flex:none}
+.d-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.d-grid button{display:flex;flex-direction:column;align-items:center;padding:8px 4px 7px;border:1.5px solid var(--line,#efe0dc);border-radius:12px;background:#fff;transition:border-color .15s,transform .15s}
+.d-grid button:hover{transform:translateY(-2px)}
+.d-grid button.on{border-color:var(--accent,#b85c74);background:var(--accent-2,#f8e6ea)}
+.d-grid b{font-size:13px;font-weight:600;margin-top:2px}
+.d-grid small{font-size:10.5px;color:var(--mute,#8a7a7e);line-height:1.2;text-align:center}
+.d-mini{display:block;width:62px}
+.d-mini .d-art *{animation:none!important}
+.d-sw{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.d-sw button,.d-pick{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line,#efe0dc);transition:transform .15s,box-shadow .15s}
+.d-sw button:hover{transform:scale(1.1)}
+.d-sw button.on,.d-pick.on{box-shadow:0 0 0 2.5px var(--accent,#b85c74)}
+.d-sw-sm{margin-top:8px}
+.d-sw-sm button,.d-sw-sm .d-pick{width:24px;height:24px}
+.modal .d-pick{display:inline-flex!important;align-items:center;justify-content:center;margin:0!important;font-size:13px;background:conic-gradient(#f9a8b8,#f4d06f,#9fd39b,#8ec5f0,#c3a6ec,#f9a8b8);position:relative;overflow:hidden;cursor:var(--cursor-hand)}
+.modal .d-pick input{position:absolute;inset:0;opacity:0;width:100%;height:100%;padding:0;border:0;cursor:inherit}
+.d-chips{display:flex;flex-wrap:wrap;gap:6px}
+.d-chips button,.d-seg button{padding:6px 11px;border-radius:999px;border:1px solid var(--line,#efe0dc);background:#fff;font-size:13px}
+.d-chips button.on,.d-seg button.on{background:var(--accent-2,#f8e6ea);border-color:var(--accent,#b85c74);color:var(--accent,#b85c74);font-weight:500}
+.d-seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.modal input[type=range]{padding:0;border:0;accent-color:var(--accent,#b85c74)}
+@media (max-width:700px){.d-panel{flex-direction:column;gap:0}.d-preview{flex:none;padding:14px}.d-preview .d-art{width:140px}.d-scroll{padding:14px 16px 8px}.d-foot{padding:10px 16px 14px}.d-grid{grid-template-columns:repeat(2,1fr)}}

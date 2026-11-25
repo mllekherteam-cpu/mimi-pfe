@@ -1,0 +1,49 @@
+/* ---------- Mimi l'ghzala (mood slider) ---------- */
+#ghzala{--v:70;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px 8px;margin-bottom:10px;box-shadow:0 4px 14px rgba(184,92,116,.08)}
+#ghzala .gz-top{display:flex;align-items:center;justify-content:space-between}
+#ghzala .gz-top b{font-family:"Great Vibes",cursive;font-weight:400;font-size:22px;color:var(--accent);line-height:1}
+#ghzala .gz-face{font-size:20px;transition:transform .3s}
+#ghzala.happy .gz-face{animation:gzhop 1s ease-in-out infinite}
+#ghzala .gz-q{display:block;color:var(--mute);font-size:12px;margin:2px 0 4px}
+#ghzala .gz-track{position:relative;height:42px}
+#ghzala .gz-track::before{content:"";position:absolute;left:0;right:0;bottom:8px;height:8px;border-radius:8px;background:#efe3e0}
+#ghzala .gz-fill{position:absolute;left:0;bottom:8px;height:8px;border-radius:8px;width:calc(var(--v) * 1%);background:linear-gradient(90deg,#b9c3d6,#e9a7b7 55%,#e8708f);transition:width .08s}
+#ghzala .gz-deer{position:absolute;bottom:10px;width:36px;height:36px;left:calc(var(--v) * 1% - var(--v) * .36px);display:inline-flex;align-items:center;justify-content:center;transition:left .08s;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.08))}
+#ghzala .gz-deer svg{width:100%;height:100%;display:block}
+#ghzala.happy .gz-deer{animation:gzjump .7s ease-in-out infinite}
+#ghzala.low .gz-deer{filter:grayscale(.5) drop-shadow(0 2px 2px rgba(0,0,0,.08));opacity:.85}
+#ghzala input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:var(--cursor-hand)}
+#ghzala .gz-ends{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+#ghzala .gz-lbl{color:var(--mute);font-size:11.5px}
+@keyframes gzjump{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px) rotate(-5deg)}}
+@keyframes gzhop{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px) scale(1.12)}}
+
+/* very happy */
+#yay{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;background:rgba(255,240,243,.45);animation:fadein .4s;transition:opacity .6s}
+#yay.out{opacity:0}
+#yay .yrain{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+#yay .yrain i{position:absolute;top:-50px;font-style:normal;font-size:var(--s);animation:yfall var(--d) var(--w) linear forwards}
+@keyframes yfall{to{transform:translate(var(--x),110vh) rotate(var(--r))}}
+#yay .ycard{position:relative;background:#fff;border-radius:24px;padding:20px 34px 18px;text-align:center;box-shadow:0 20px 60px rgba(184,92,116,.28);animation:pop .7s cubic-bezier(.3,1.5,.5,1)}
+#yay .ydeer{display:inline-block;width:110px;height:110px;animation:gzjump .55s ease-in-out infinite}
+#yay .ydeer svg{width:100%;height:100%;display:block}
+#yay .ybig{font-family:"Great Vibes",cursive;font-size:46px;color:var(--accent);line-height:1.1}
+#yay .ysub{font-size:16px;font-weight:600;color:#7a3b4c;margin:2px 0 4px}
+#yay small{color:var(--mute)}
+.gz-burst{position:fixed;z-index:96;pointer-events:none;font-size:18px;animation:gzburst 1.3s ease-out forwards}
+@keyframes gzburst{from{transform:translate(-50%,-50%) scale(.4);opacity:1}to{transform:translate(calc(-50% + var(--bx)),calc(-50% + var(--by))) scale(1.2) rotate(200deg);opacity:0}}
+
+/* not happy */
+#gzSad{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;background:rgba(60,40,48,.28);backdrop-filter:blur(3px);animation:fadein .4s}
+#gzSad .gzcard{position:relative;background:#fff;border-radius:22px;padding:22px 24px 18px;width:min(420px,calc(100% - 28px));max-height:calc(100% - 40px);overflow:auto;box-shadow:0 20px 60px rgba(60,40,48,.25);animation:pop .6s cubic-bezier(.3,1.4,.5,1)}
+#gzSad .gx{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;color:var(--mute)}
+#gzSad .gzhead{font-size:34px;text-align:center}
+#gzSad h3{margin:4px 0 2px;text-align:center;color:#7a3b4c;font-size:18px}
+#gzSad .gzsub{margin:0 0 12px;text-align:center;color:var(--mute);font-size:13.5px}
+#gzSad label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px}
+#gzSad textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-weight:400;font-size:13.5px;resize:vertical;background:#fffafa}
+#gzSad textarea:focus{outline:2px solid var(--accent-2);border-color:var(--accent)}
+#gzSad .gzbtns{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+#gzSad .gzlater{padding:7px 12px;border-radius:10px;color:var(--mute)}
+#gzSad .gzsend{padding:7px 14px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600}
+@media (prefers-reduced-motion:reduce){#yay .yrain,.gz-burst{display:none}#ghzala .gz-deer,#yay .ydeer{animation:none}}
