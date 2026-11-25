@@ -944,9 +944,9 @@ $('#docsClose').onclick = () => $('#docs').classList.remove('open');
 // Google Docs opens as a real window on the right half of the screen: she edits there, the chat stays here
 $('#docsExt').onclick = () => {
   if (!currentDoc) return;
-  const w = Math.round(screen.availWidth / 2), h = screen.availHeight;
-  const win = window.open(currentDoc.url, 'mimi_gdoc', `popup=yes,width=${w},height=${h},left=${screen.availWidth - w},top=0`);
-  if (!win) window.open(currentDoc.url, '_blank');
+  // plain new tab = always works; the sized popup was easy to lose (blocked, or placed off-screen on a second monitor)
+  const win = window.open(currentDoc.url, '_blank');
+  if (!win) { location.href = currentDoc.url; }
 };
 
 // ---------- sidebar, export, settings ----------
