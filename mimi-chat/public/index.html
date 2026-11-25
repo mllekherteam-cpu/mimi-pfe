@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mimi · Assistant PFE</title>
 <meta name="theme-color" content="#fcf7f4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mimi">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="https://fonts.gstatic.com/s/e/notoemoji/latest/1f970/512.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
@@ -293,6 +298,40 @@ body.panel #fawn{display:none}
   .composer-wrap{padding:0 8px 10px}
   .pill .lbl{display:none}
 }
+
+/* ---------- iPhone ---------- */
+html,body{height:100%;height:100dvh}
+@supports (-webkit-touch-callout:none){ textarea,input,select{font-size:16px!important} }
+@media (max-width:860px){
+  body{-webkit-text-size-adjust:100%}
+  .topbar{padding-top:env(safe-area-inset-top);height:calc(52px + env(safe-area-inset-top))}
+  #side{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+  .composer-wrap{padding:0 8px calc(8px + env(safe-area-inset-bottom))}
+  .composer{border-radius:18px;padding:8px 8px 6px 12px}
+  #input{font-size:16px;max-height:30vh}
+  .crow{flex-wrap:nowrap;gap:2px}
+  .crow .pill{padding:6px 7px}
+  #effort{display:none}
+  select.pill#model{max-width:150px;padding-right:20px;font-size:14px!important}
+  .hint{font-size:10.5px;margin-top:4px}
+  #empty{padding:6vh 16px 12px}
+  #empty h1{font-size:28px}
+  .starters{grid-template-columns:1fr 1fr;gap:8px}
+  .starters button{padding:10px 11px;font-size:13px}
+  .starters small{display:none}
+  .msg.user .bubble{max-width:92%}
+  .actions{opacity:1}
+  .actions button{padding:7px}
+  #vbox{left:8px;bottom:calc(150px + env(safe-area-inset-bottom));width:min(62vw,240px)}
+  #giftNote{left:12px;right:12px;width:auto;bottom:calc(140px + env(safe-area-inset-bottom))}
+  .giftcard .q{font-size:26px}
+  .modal{padding:18px}
+  #docs.open{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+  #canvas{padding:18px 16px 40px}
+  .ftools{gap:4px}
+  .ftools .meta{display:none}
+}
+body:not(.ready) #side{transition:none}
 </style>
 </head>
 <body>
@@ -1199,6 +1238,8 @@ async function boot() {
     const h = location.hash.slice(1); if (h && !conv) openConv(h);
   } catch {}
 }
+if (matchMedia('(pointer: coarse)').matches) input.placeholder = 'Écris ton message…';
+setTimeout(() => document.body.classList.add('ready'), 400);
 renderList(); renderChat(); autosize(); boot();
 </script>
 <script src="/notes.js"></script>
