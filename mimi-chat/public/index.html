@@ -373,13 +373,48 @@ body.night .composer{box-shadow:0 2px 18px rgba(0,0,0,.35)}
 .theme-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
 .theme-seg button{padding:8px 10px;border-radius:10px;border:1px solid var(--line);font-size:13.5px;background:var(--panel);color:var(--ink)}
 .theme-seg button.on{background:var(--accent-2);border-color:var(--accent);color:var(--accent);font-weight:600}
+
+/* ---------- No-love / Discreet professional mode ---------- */
+#noLoveBtn{position:relative;flex:none;opacity:.72;transition:background .18s,color .18s,opacity .18s}
+#noLoveBtn:hover{opacity:1}
+#noLoveBtn:not(.on)::after{content:"Si quelqu’un est près de toi, clique ici";position:absolute;top:calc(100% + 8px);right:0;
+  background:var(--ink);color:#fff;font-size:12px;font-weight:400;padding:6px 10px;border-radius:9px;white-space:nowrap;
+  box-shadow:0 8px 22px rgba(0,0,0,.18);opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .16s,transform .16s;z-index:60}
+#noLoveBtn:not(.on):hover::after{opacity:1;transform:translateY(0)}
+#noLoveBtn.on{opacity:.55}
+#noLoveBtn.on:hover{opacity:1}
+#noLoveBtn[hidden]{display:none!important}
+#noLoveTip{position:fixed;top:60px;right:20px;z-index:86;width:330px;max-width:calc(100vw - 24px);background:var(--panel);
+  border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px rgba(46,36,39,.18);padding:16px 18px 14px;
+  animation:pop .4s cubic-bezier(.3,1.4,.5,1)}
+#noLoveTip .nt-x{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;color:var(--mute);font-size:13px;display:flex;align-items:center;justify-content:center}
+#noLoveTip .nt-x:hover{background:var(--accent-2);color:var(--ink)}
+#noLoveTip .nt-head{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;margin-bottom:6px;padding-right:22px}
+#noLoveTip p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:var(--mute)}
+#noLoveTip .nt-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#noLoveTip .nt-chk{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--mute);cursor:pointer;user-select:none}
+#noLoveTip .nt-chk input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer}
+#noLoveTip .solid{padding:6px 14px;font-size:13.5px}
+body.night #noLoveTip{box-shadow:0 16px 44px rgba(0,0,0,.45)}
+@media (max-width:860px){#noLoveTip{top:calc(58px + env(safe-area-inset-top));right:12px;left:12px;width:auto}}
+body.nolove #flowerBtn,
+body.nolove #fromOmar,
+body.nolove #ghzala,
+body.nolove #giftNote,
+body.nolove #gift,
+body.nolove #vbox,
+body.nolove #yay,
+body.nolove #gzSad,
+body.nolove #noLoveTip,
+body.nolove #bLove{display:none!important}
+body.nolove .brand.love #bPlain{transform:none;opacity:1}
 </style>
 </head>
 <body>
 
 <aside id="side">
   <div class="side-top">
-    <div class="brand"><span class="emo"><img id="emo" alt="🥰" src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f970/512.webp"></span>
+    <div class="brand"><span class="emo"><img id="emo" alt="🌿" src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f33f/512.webp"></span>
       <span class="bwrap"><span id="bPlain"><b>Mimi</b> · PFE</span><span id="bLove"><span class="script" id="loveWord">I love you</span> <b>Mimi</b></span></span></div>
     <button class="btn-new" id="newChat"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nouvelle conversation</button>
     <label class="search"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="search" placeholder="Rechercher…"></label>
@@ -399,6 +434,7 @@ body.night .composer{box-shadow:0 2px 18px rgba(0,0,0,.35)}
   <div class="topbar">
     <button class="iconbtn" id="toggleSide" title="Historique"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
     <div class="title" id="convTitle" title="Cliquer pour renommer"></div>
+    <button class="iconbtn" id="noLoveBtn" hidden title="Si quelqu’un est près de toi, clique ici" aria-label="Si quelqu’un est près de toi, clique ici"><svg class="icon" id="noLoveIcon" viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.77 21.77 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24M1 1l22 22"/></svg></button>
     <div id="presenceBar"></div>
     <button class="iconbtn" id="themeBtn" title="Mode jour / nuit & Focus" aria-label="Mode jour / nuit & Focus"><svg class="icon" id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
     <button id="flowerBtn" title="🌷"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f490/512.webp" alt="💐" onerror="this.replaceWith('💐')"></button>
@@ -408,7 +444,7 @@ body.night .composer{box-shadow:0 2px 18px rgba(0,0,0,.35)}
   <div id="scroll">
     <div id="empty">
       <div class="fawn-hero" role="button" tabindex="0" aria-label="Personnaliser mon faon"></div>
-      <h1 id="hello">Bonjour <span id="helloName">Mimi</span> ❤️</h1>
+      <h1 id="hello">Bonjour <span id="helloName"></span></h1>
       <p>Ton assistante pour le mémoire : eaux usées, boues, biogaz, rédaction, références.</p>
       <div class="starters" id="starters"></div>
     </div>
@@ -1044,15 +1080,27 @@ function modal(html, onOk) {
   return bg;
 }
 $('#openSettings').onclick = () => {
+  const showDiscreet = !isGuestProfile();
+  const discreetHtml = showDiscreet ? `<label>Mode discret (si quelqu’un est près de toi)</label>
+    <button type="button" class="ghost" id="sNoLove" style="border:1px solid var(--line);border-radius:10px;padding:8px 12px;width:100%;justify-content:space-between">
+      <span id="sNoLoveTxt">${noLovePref ? '👁️ Mode discret activé (site sobre)' : '👁️‍🗨️ Mode normal — cliquer pour activer'}</span>
+      <b id="sNoLoveSt" style="color:var(--accent)">${noLovePref ? 'ON' : 'OFF'}</b>
+    </button>` : '';
   const bg = modal(`<h2>Réglages</h2>
     <label>Notes sur mon projet (l’assistante les lit à chaque message : données de stage, consignes de l’encadrante, ce qui est déjà fait…)</label>
     <textarea id="sNotes" placeholder="Ex. : débit moyen de la STEP 2025 = … m³/j ; l’encadrante veut… ; chapitre 2 terminé…">${esc(settings.notes)}</textarea>
     <label>Code d’accès</label><input id="sCode" type="password" value="${esc(settings.code)}">
+    ${discreetHtml}
     <label>Compagnon</label><button type="button" class="ghost" id="sDeer" style="border:1px solid var(--line);border-radius:10px;padding:8px 12px">🦌 Personnaliser mon faon</button>
     <p style="margin-top:12px">Sonnet pour les petites questions, Opus au quotidien, Fable pour les grands travaux (relecture complète, parties difficiles).</p>
     <div class="row"><button class="ghost" data-cancel>Annuler</button><button class="solid" data-ok>Enregistrer</button></div>`,
   (bg) => { settings.notes = bg.querySelector('#sNotes').value; settings.code = bg.querySelector('#sCode').value; LS.set('settings', settings); toast('Enregistré'); boot(); });
   bg.querySelector('#sDeer')?.addEventListener('click', () => { bg.remove(); window.Deer?.open(); });
+  bg.querySelector('#sNoLove')?.addEventListener('click', () => {
+    toggleNoLove();
+    bg.querySelector('#sNoLoveTxt').textContent = noLovePref ? '👁️ Mode discret activé (site sobre)' : '👁️‍🗨️ Mode normal — cliquer pour activer';
+    bg.querySelector('#sNoLoveSt').textContent = noLovePref ? 'ON' : 'OFF';
+  });
 };
 function askCode() {
   if (document.querySelector('[data-codemodal]')) return;
@@ -1161,11 +1209,16 @@ const FOCUS_TRACKS = [
 ];
 const vid = $('#vid');
 const aud = $('#aud');
+let noLovePref = !!LS.get('noLove', false);
+function isGuestProfile() { return !settings.profile || settings.profile.role === 'guest'; }
+function isNoLove() { return isGuestProfile() || noLovePref; }
+window.isNoLove = isNoLove;
 let focusMode = !!LS.get('focusMode', false);
 let trackIdx = Math.min(Math.max(0, +LS.get('trackIdx', 0) || 0), TRACKS.length - 1);
 let focusIdx = Math.min(Math.max(0, +LS.get('focusIdx', 0) || 0), FOCUS_TRACKS.length - 1);
-const activeTracks = () => (focusMode ? FOCUS_TRACKS : TRACKS);
-const activeIdx = () => (focusMode ? focusIdx : trackIdx);
+const useFocusTracks = () => focusMode || isNoLove();
+const activeTracks = () => (useFocusTracks() ? FOCUS_TRACKS : TRACKS);
+const activeIdx = () => (useFocusTracks() ? focusIdx : trackIdx);
 const curTrack = () => activeTracks()[activeIdx()];
 
 // hidden background audio stream for Focus mode tracks
@@ -1192,7 +1245,7 @@ function ensureYt() {
           const st = e.data;
           if (st === 1) { ytPlaying = true; paintTune(); }
           else if (st === 2) { ytPlaying = false; paintTune(); }
-          else if (st === 0) { ytPlaying = false; if (focusMode) loadTrack(focusIdx + 1, true); else paintTune(); }
+          else if (st === 0) { ytPlaying = false; if (useFocusTracks()) loadTrack(focusIdx + 1, true); else paintTune(); }
         },
       },
     });
@@ -1227,7 +1280,9 @@ function isAnyPlaying() {
 }
 function showTune() { $('#tune').classList.add('on'); }
 function receiveGift() {
-  LS.set('giftGot', true); LS.set('giftShown', true); showTune();
+  showTune();
+  if (isNoLove()) return;
+  LS.set('giftGot', true); LS.set('giftShown', true);
   if ($('#giftNote')) return;
   const n = document.createElement('div'); n.id = 'giftNote';
   n.innerHTML = `<div class="gi">🎁</div><div><b>Tu as reçu une vidéo</b><small>Quelqu’un pense à toi pendant que tu travailles.</small><br><button>Ouvrir 💌</button></div>`;
@@ -1238,7 +1293,7 @@ function loadTrack(idx, autoplay) {
   stopAllAudio();
   const list = activeTracks();
   const next = ((idx % list.length) + list.length) % list.length;
-  if (focusMode) { focusIdx = next; LS.set('focusIdx', focusIdx); }
+  if (useFocusTracks()) { focusIdx = next; LS.set('focusIdx', focusIdx); }
   else { trackIdx = next; LS.set('trackIdx', trackIdx); }
   const t = curTrack();
   if (!t.video) $('#vbox').classList.remove('show');
@@ -1277,6 +1332,7 @@ function paintTune() {
   $('#tState').textContent = `${state} · ${activeIdx() + 1}/${list.length}`;
 }
 function openVideo() {
+  if (isNoLove()) return;
   if (focusMode) setFocusMode(false, false);
   if (!curTrack().video) loadTrack(0, false);
   $('#vbox').classList.add('show');
@@ -1360,17 +1416,18 @@ $('#themeBtn').onclick = () => {
 const ASK_MORE = ['Tu en veux encore ?', 'Tu as besoin de plus ?', 'Tu en veux encore, babe ?', 'On recharge pour toi ?'];
 function askRecharge() {
   return new Promise((resolve) => {
-    const q = ASK_MORE[Math.floor(Math.random() * ASK_MORE.length)];
-    const bg = modal(`<div style="text-align:center"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f97a/512.webp" style="width:72px;height:72px" alt="🥺">
-      <h2 style="margin-top:6px">Tu as tout utilisé…</h2>
-      <p style="font-size:15px;line-height:1.55">Tu as tellement travaillé que ta réserve est vide.<br><b>${q}</b></p>
-      <div class="row" style="justify-content:center"><button class="ghost" data-cancel>Plus tard</button><button class="solid" data-ok>Oui, j’en veux plus ❤️</button></div></div>`,
+    const pro = isNoLove();
+    const q = pro ? 'Souhaitez-vous recharger le crédit ?' : ASK_MORE[Math.floor(Math.random() * ASK_MORE.length)];
+    const bg = modal(`<div style="text-align:center">${pro ? '' : '<img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f97a/512.webp" style="width:72px;height:72px" alt="🥺">'}
+      <h2 style="margin-top:6px">${pro ? 'Crédit épuisé' : 'Tu as tout utilisé…'}</h2>
+      <p style="font-size:15px;line-height:1.55">${pro ? 'La réserve de crédit est vide.' : 'Tu as tellement travaillé que ta réserve est vide.'}<br><b>${q}</b></p>
+      <div class="row" style="justify-content:center"><button class="ghost" data-cancel>Plus tard</button><button class="solid" data-ok>${pro ? 'Recharger' : 'Oui, j’en veux plus ❤️'}</button></div></div>`,
     () => {
       api('/api/recharge', { method: 'POST' }).then((r) => r.json()).then(() => {
-        modal(`<div style="text-align:center"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f496/512.webp" style="width:72px;height:72px" alt="💖">
+        modal(`<div style="text-align:center">${pro ? '' : '<img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f496/512.webp" style="width:72px;height:72px" alt="💖">'}
           <h2 style="margin-top:6px">C’est rechargé ✨</h2>
-          <p style="font-size:15px;line-height:1.55">Tu as de nouveau tout ce qu’il te faut, comme au premier jour.<br>Je reprends ton message.</p>
-          <div class="row" style="justify-content:center"><button class="solid" data-ok>Merci ❤️</button></div></div>`, () => resolve(true));
+          <p style="font-size:15px;line-height:1.55">${pro ? 'Le crédit a été rechargé. Reprise de votre message.' : 'Tu as de nouveau tout ce qu’il te faut, comme au premier jour.<br>Je reprends ton message.'}</p>
+          <div class="row" style="justify-content:center"><button class="solid" data-ok>${pro ? 'Continuer' : 'Merci ❤️'}</button></div></div>`, () => resolve(true));
       }).catch(() => { toast('Petit souci, réessaie'); resolve(false); });
     });
     bg.querySelector('[data-cancel]').addEventListener('click', () => resolve(false));
@@ -1428,9 +1485,18 @@ const QUOTES = [
 const BLOOMS = ['1f337', '1f339', '1f338', '1f33c', '1f490'];
 let lastQ = -1;
 function sendFlowers() {
-  if ($('#gift')) return;
+  if (isNoLove() || $('#gift')) return;
   let i; do { i = Math.floor(Math.random() * QUOTES.length); } while (i === lastQ); lastQ = i;
   const [quote, reply] = QUOTES[i];
+  const logFlower = (action, text = '') => {
+    const p = settings.profile || {};
+    api('/api/react', {
+      method: 'POST',
+      keepalive: true,
+      body: JSON.stringify({ action, quote, reply: text, who: p.name || p.id || '', role: p.role || '' }),
+    }).catch(() => {});
+  };
+  logFlower('open');
   const g = document.createElement('div'); g.id = 'gift';
   g.innerHTML = `<div class="giftcard"><button class="gx" title="Fermer">✕</button>
     <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/${BLOOMS[Math.floor(Math.random() * BLOOMS.length)]}/512.webp" alt="" onerror="this.outerHTML='<div style=&quot;font-size:96px;line-height:120px&quot;>💐</div>'">
@@ -1445,15 +1511,23 @@ function sendFlowers() {
     f.style.setProperty('--x', (Math.random() * 160 - 80) + 'px'); f.style.setProperty('--r', (Math.random() * 540 - 270) + 'deg');
     g.appendChild(f);
   }
+  let done = false;
   const close = () => { g.style.transition = 'opacity .5s'; g.style.opacity = 0; setTimeout(() => g.remove(), 500); };
   g.onclick = (e) => {
     const r = e.target.closest('[data-r]');
     if (r) {
-      api('/api/react', { method: 'POST', body: JSON.stringify({ quote, reply: r.dataset.r }) }).catch(() => {});
+      if (done) return; done = true;
+      logFlower('reply', r.dataset.r);
       r.closest('.greply').innerHTML = '<div class="sent">envoyé 💌</div>';
       setTimeout(close, 1100); return;
     }
-    if (e.target === g || e.target.closest('.gx')) close();
+    if (e.target.closest('.gx')) {
+      if (!done) { done = true; logFlower('cross', '✕'); }
+      close();
+    } else if (e.target === g) {
+      if (!done) { done = true; logFlower('backdrop', '(outside)'); }
+      close();
+    }
   };
 }
 $('#flowerBtn').onclick = sendFlowers;
@@ -1464,15 +1538,18 @@ setTimeout(() => $('#flowerBtn').classList.add('sway'), 3000);
 // ---------- little love notes (every 2 to 2.5 minutes) ----------
 const every = (fn) => { const go = () => setTimeout(() => { fn(); go(); }, 120000 + Math.random() * 30000); go(); };
 const EMOJI = ['1f970', '1f618', '2764_fe0f', '1f917', '1f60d', '1f495', '1f496'];  // Noto animated: hearts face, kiss, heart, hug, heart eyes, two hearts, sparkling heart
-for (const c of EMOJI) { const i = new Image(); i.src = `https://fonts.gstatic.com/s/e/notoemoji/latest/${c}/512.webp`; }
+const PRO_EMOJI = '1f33f'; // Noto animated leaf/herb for professional/discreet mode
+for (const c of [...EMOJI, PRO_EMOJI]) { const i = new Image(); i.src = `https://fonts.gstatic.com/s/e/notoemoji/latest/${c}/512.webp`; }
 let emoI = 0;
 every(() => {
+  if (isNoLove()) return;
   const img = $('#emo'); img.classList.add('swap');
   setTimeout(() => { emoI = (emoI + 1) % EMOJI.length; img.src = `https://fonts.gstatic.com/s/e/notoemoji/latest/${EMOJI[emoI]}/512.webp`; img.classList.remove('swap'); }, 300);
 });
 const LOVE = ['I love you', 'I adore', 'I cherish'];
 let loveI = 0;
 function loveNote() {
+  if (isNoLove()) return;
   const b = document.querySelector('.brand'); const w = $('#loveWord');
   w.textContent = LOVE[loveI]; loveI = (loveI + 1) % LOVE.length;
   b.classList.remove('love'); void w.offsetWidth; b.classList.add('love');
@@ -1482,10 +1559,94 @@ setTimeout(loveNote, 6000); every(loveNote);
 const NAMES = ['Mimi', 'baby', 'honey', 'darling', 'my love'];
 let nameI = 0;
 every(() => {
+  if (isNoLove()) return;
   if (settings.profile && settings.profile.role !== 'mimi') return;
   const n = $('#helloName'); if (!n) return; n.classList.add('out');
   setTimeout(() => { nameI = (nameI + 1) % NAMES.length; n.textContent = NAMES[nameI]; n.classList.remove('out'); }, 600);
 });
+
+// ---------- No-love / Discreet mode ----------
+const EYE_OFF_SVG = '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.77 21.77 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24M1 1l22 22"/>';
+const EYE_ON_SVG = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+function applyNoLove() {
+  const nl = isNoLove();
+  const guest = isGuestProfile();
+  document.body.classList.toggle('nolove', nl);
+  document.body.classList.toggle('is-guest', guest);
+  const btn = $('#noLoveBtn');
+  if (btn) {
+    btn.hidden = guest;
+    btn.classList.toggle('on', noLovePref);
+    btn.title = noLovePref ? 'Mode discret actif — cliquer pour revenir' : 'Si quelqu’un est près de toi, clique ici';
+    btn.setAttribute('aria-label', btn.title);
+    const ic = $('#noLoveIcon');
+    if (ic) ic.innerHTML = noLovePref ? EYE_ON_SVG : EYE_OFF_SVG;
+  }
+  const img = $('#emo');
+  if (img) {
+    img.src = `https://fonts.gstatic.com/s/e/notoemoji/latest/${nl ? PRO_EMOJI : EMOJI[emoI]}/512.webp`;
+    img.alt = nl ? '🌿' : '🥰';
+  }
+  const bPlain = $('#bPlain');
+  if (bPlain) {
+    bPlain.innerHTML = guest ? '<b>Assistant</b> · PFE' : '<b>Mimi</b> · PFE';
+  }
+  if (nl) {
+    document.querySelector('.brand')?.classList.remove('love');
+    $('#giftNote')?.remove();
+    $('#gift')?.remove();
+    $('#yay')?.remove();
+    $('#gzSad')?.remove();
+    $('#noLoveTip')?.remove();
+    $('#vbox')?.classList.remove('show');
+    if (!vid.paused) vid.pause();
+    if (!aud.paused) aud.pause();
+    heartsOn(false);
+    const n = $('#helloName');
+    if (n && settings.profile) n.textContent = settings.profile.name || 'Mimi';
+  } else {
+    scheduleNoLoveTip();
+  }
+  paintTune();
+}
+let noLoveTipClosed = false;
+let noLoveTipTimer = 0;
+function scheduleNoLoveTip() {
+  if (noLoveTipClosed || LS.get('noLoveTipDismissed', false) || isNoLove() || $('#noLoveTip')) return;
+  clearTimeout(noLoveTipTimer);
+  noLoveTipTimer = setTimeout(showNoLoveTip, 1200);
+}
+function showNoLoveTip() {
+  if (noLoveTipClosed || LS.get('noLoveTipDismissed', false) || isNoLove() || $('#noLoveTip')) return;
+  const tip = document.createElement('div');
+  tip.id = 'noLoveTip';
+  tip.innerHTML = `<button class="nt-x" type="button" title="Fermer">✕</button>
+    <div class="nt-head">👀 Si quelqu’un est près de toi</div>
+    <p>Clique sur le petit œil à gauche des photos de profil (ou dans <b>Réglages</b>) pour cacher instantanément tous les petits messages personnels et garder un site sobre et professionnel. Clique à nouveau quand tu es seule.</p>
+    <div class="nt-foot">
+      <label class="nt-chk"><input type="checkbox" id="nlDontRemind"> Ne plus me le rappeler</label>
+      <button type="button" class="solid" id="nlGotIt">J’ai compris</button>
+    </div>`;
+  document.body.appendChild(tip);
+  const close = () => {
+    if (tip.querySelector('#nlDontRemind')?.checked) LS.set('noLoveTipDismissed', true);
+    noLoveTipClosed = true;
+    tip.remove();
+  };
+  tip.querySelector('.nt-x').onclick = close;
+  tip.querySelector('#nlGotIt').onclick = close;
+}
+function toggleNoLove() {
+  if (isGuestProfile()) return;
+  noLovePref = !noLovePref;
+  LS.set('noLove', noLovePref);
+  applyNoLove();
+  window.MimiProfiles?.applyProfileUI();
+  toast(noLovePref ? 'Mode discret activé' : 'Mode normal réactivé');
+}
+window.applyNoLove = applyNoLove;
+$('#noLoveBtn').onclick = toggleNoLove;
+applyNoLove();
 
 // ---------- boot ----------
 async function boot() {

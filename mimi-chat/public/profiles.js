@@ -85,11 +85,16 @@
   }
 
   function applyProfileUI() {
+    window.applyNoLove?.();
     const p = getProfile();
     const hello = $('#hello');
-    if (hello && p) {
-      if (p.role === 'mimi') {
-        hello.innerHTML = 'Bonjour <span id="helloName">Mimi</span> ❤️';
+    if (hello) {
+      if (!p) {
+        hello.innerHTML = 'Bonjour <span id="helloName"></span>';
+      } else if (p.role === 'mimi') {
+        hello.innerHTML = window.isNoLove?.()
+          ? 'Bonjour <span id="helloName">Mimi</span>'
+          : 'Bonjour <span id="helloName">Mimi</span> ❤️';
       } else if (p.role === 'omar') {
         hello.innerHTML = 'Salut <span id="helloName">Omar</span> 👋';
       } else {
@@ -173,16 +178,49 @@
         <div class="pp-av online ai"><img src="/avatars/ai.svg" alt="IA"><span class="pdot"></span></div>
         <div class="pp-info"><b>Assistante IA</b><small class="on">Toujours disponible</small></div>
       </div>
-      <div class="pp-foot"><button id="ppSwitch">Changer de profil</button></div>`;
+      <div class="pp-foot">${me?.role === 'omar' ? '<button id="ppReacts" style="margin-bottom:6px">🌷 Clics fleurs</button>' : ''}<button id="ppSwitch">Changer de profil</button></div>`;
 
     document.body.appendChild(pop);
     const r = anchor.getBoundingClientRect();
     pop.style.left = Math.max(8, Math.min(r.right - pop.offsetWidth, innerWidth - pop.offsetWidth - 8)) + 'px';
     pop.style.top = (r.bottom + 8) + 'px';
     pop.querySelector('#ppSwitch').onclick = () => { closePop(); openProfilePicker({ requireCode: false, closable: true }); };
+    const rb = pop.querySelector('#ppReacts');
+    if (rb) rb.onclick = () => { closePop(); openFlowerLog(); };
     setTimeout(() => document.addEventListener('click', (e) => {
       if (!e.target.closest('#presencePop') && !e.target.closest('#presenceBar')) closePop();
     }, { once: true }));
+  }
+
+  async function openFlowerLog() {
+    const bg = modal(`<div>
+      <h2 style="margin:0 0 8px">🌷 Clics fleurs</h2>
+      <div id="flList" style="max-height:55vh;overflow:auto;font-size:13px;line-height:1.45;margin:10px 0">Chargement…</div>
+      <div class="row" style="justify-content:flex-end"><button type="button" class="solid" data-ok>Fermer</button></div>
+    </div>`, () => {});
+    const box = bg.querySelector('#flList');
+    try {
+      const r = await api('/api/react');
+      const items = await r.json();
+      if (!Array.isArray(items) || !items.length) { box.textContent = 'Aucun clic pour le moment.'; return; }
+      const label = (x) => {
+        const a = x.action || 'reply';
+        if (a === 'open') return '🌷 A ouvert les fleurs';
+        if (a === 'cross') return '✕ A cliqué sur la croix';
+        if (a === 'backdrop') return '◦ A fermé à côté';
+        return '💌 ' + esc(x.reply || '');
+      };
+      box.innerHTML = items.map((x) => {
+        const dt = x.at ? new Date(x.at).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+        const who = x.who ? ` · ${esc(x.who)}` : '';
+        return `<div style="padding:8px 0;border-bottom:1px solid var(--line)">
+          <div style="display:flex;justify-content:space-between;gap:8px"><b>${label(x)}</b><span style="color:var(--mute);white-space:nowrap">${dt}${who}</span></div>
+          <div style="color:var(--mute);font-size:12px;margin-top:2px">${esc(x.quote || '')}</div>
+        </div>`;
+      }).join('');
+    } catch {
+      box.textContent = 'Erreur de chargement.';
+    }
   }
 
   async function pingPresence(offline = false, profileOverride = null) {
@@ -236,17 +274,17 @@
         <button type="button" class="who-card ${picked === 'mimi' ? 'sel' : ''}" data-role="mimi">
           <div class="who-pic"><img src="/avatars/mimi.jpg" alt="Mimi"></div>
           <b>Mimi</b>
-          <small>Cua cuaaa</small>
+          <small>Étudiante PFE</small>
         </button>
         <button type="button" class="who-card ${picked === 'omar' ? 'sel' : ''}" data-role="omar">
           <div class="who-pic"><img src="/avatars/omar.jpg" alt="Omar"></div>
           <b>Omar</b>
-          <small>Le p’tit gars</small>
+          <small>Collaborateur</small>
         </button>
         <button type="button" class="who-card ${picked === 'guest' ? 'sel' : ''}" data-role="guest">
           <div class="who-pic"><img id="whoGuestImg" src="${guestAvatar}" alt="Invité"></div>
           <b>Invité</b>
-          <small>Avatar aléatoire</small>
+          <small>Accès invité</small>
         </button>
       </div>
       <div class="who-guest ${picked === 'guest' ? 'show' : ''}" id="whoGuestBox">
@@ -342,5 +380,5 @@
   // Override askCode so 401 shows the unified profile + access code modal
   window.askCode = () => openProfilePicker({ requireCode: true, closable: false });
 
-  renderPresence();
+  applyProfileUI();
 })();
