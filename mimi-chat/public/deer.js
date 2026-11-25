@@ -27,6 +27,7 @@
     scarf:   { label: 'Écharpe',            ico: '🧣' },
     glasses: { label: 'Lunettes',           ico: '👓' },
     cap:     { label: 'Toque de diplômée',  ico: '🎓' },
+    helmet:  { label: 'Casque moto',        ico: '🏍️' },
     heart:   { label: 'Petit cœur',         ico: '💗' },
   };
   const ACC_COLORS = ['#e88ea3', '#b85c74', '#f4b860', '#8fbf9f', '#7fa8d9', '#b39ddb', '#ffffff'];
@@ -35,6 +36,10 @@
     'Courage Mimi, tu avances super bien ✨', 'Une petite pause thé ? 🍵', 'Je crois en toi 💗',
     'Ton mémoire va être magnifique 🌿', 'Un paragraphe à la fois 🐾', 'Fière de toi 🥹',
     'N’oublie pas de boire de l’eau 💧', 'Tu es plus forte que tu ne le crois 🌸', 'Omar pense à toi ❤️',
+  ];
+  const PHRASES_PRO = [
+    'Bon courage pour le mémoire ✨', 'Une petite pause thé ? 🍵', 'Un paragraphe à la fois 🐾',
+    'N’oublie pas de boire de l’eau 💧', 'Tu avances super bien 🌿', 'Reste concentrée, ça avance bien ✨',
   ];
 
   const DEFAULTS = { style: 'faon', coat: 'caramel', custom: '', accs: ['crown', 'heart'], accColor: '#e88ea3', mode: 'color', side: 'right', size: 115, name: 'Noisette' };
@@ -95,6 +100,15 @@
     if (a.has('cap')) o.top += `<path d="M78 34V45C90 52 110 52 122 45V34Z" fill="#3a2e33"/><path d="M100 18L144 31L100 44L56 31Z" fill="#2e2427"/>`
       + `<path d="M100 18L144 31L100 44L56 31Z" fill="#fff" opacity=".07"/><path d="M100 31L136 36V54" stroke="${c.accColor}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
       + `<path d="M133 53H139L140 62H132Z" fill="${c.accColor}"/><circle cx="100" cy="31" r="2.6" fill="${c.accColor}"/>`;
+    if (a.has('helmet')) o.head += `<g class="d-helmet">`
+      + `<path d="M64 74C75 66 125 66 136 74C141 82 140 98 134 105C122 109 78 109 66 105C60 98 59 82 64 74Z" fill="none" stroke="#6d6973" stroke-width="4.5"/>`
+      + `<path fill-rule="evenodd" fill="#1e1c22" d="M100 26C136 26 156 50 154 86C153 109 137 128 100 131C63 128 47 109 46 86C44 50 64 26 100 26ZM64 74C59 82 60 98 66 105C78 109 122 109 134 105C140 98 141 82 136 74C125 66 75 66 64 74Z"/>`
+      + `<path d="M56 64C70 50 130 50 144 64" fill="none" stroke="${c.accColor}" stroke-width="3.2" stroke-linecap="round" opacity=".9"/>`
+      + `<path d="M64 74C75 66 125 66 136 74C141 82 140 98 134 105C122 109 78 109 66 105C60 98 59 82 64 74Z" fill="none" stroke="#36333d" stroke-width="2.2"/>`
+      + `<path d="M62 46C74 34 94 31 110 34C96 36 80 41 68 51Z" fill="#fff" opacity=".18"/>`
+      + `<rect x="89" y="114" width="22" height="7" rx="3.5" fill="#322f38"/><path d="M93 117.5H107" stroke="#524e5b" stroke-width="1.6" stroke-linecap="round"/>`
+      + `${both(`<circle cx="50" cy="84" r="4.6" fill="#33303a" stroke="#141217" stroke-width="1.2"/><circle cx="50" cy="84" r="1.6" fill="#6b6775"/>`)}`
+      + `</g>`;
     if (a.has('heart')) o.back += `<path class="d-heart" fill="#e88ea3" d="M172 36C169 32 162 34 164 40C165 43 172 47 172 47S179 43 180 40C182 34 175 32 172 36Z"/>`
       + `<path class="d-heart d-heart2" fill="#f3b3c2" d="M28 104C26 101.5 21.5 103 23 107C23.7 109 28 111.5 28 111.5S32.3 109 33 107C34.5 103 30 101.5 28 104Z"/>`;
     return o;
@@ -127,7 +141,7 @@
     <g class="d-cream">${headSpots}</g>
     <ellipse class="d-cream" cx="100" cy="105" rx="24" ry="17"/>
     <g class="d-eyes">
-      ${both(`<ellipse cx="80" cy="87" rx="9.8" ry="9.5" fill="#9bdcd5" stroke="#3b3033" stroke-width="1.6"/><ellipse cx="80" cy="91.2" rx="6.6" ry="3.6" fill="#c7f0ec" opacity=".85"/><ellipse cx="81.2" cy="85.2" rx="5.2" ry="5.5" fill="#2d2024"/><circle cx="84.2" cy="83.6" r="2.7" fill="#fff"/><circle cx="77.2" cy="89.8" r="1.4" fill="#fff" opacity=".92"/><path class="d-coat" d="M68 83.2C73 80.5 85 80.4 91.5 83.2V73H68Z"/><path d="M69 82.8C74 79.8 85 79.8 91 82.8C88 76.2 72.5 76.2 69 82.8Z" fill="#3b1f14" opacity=".13"/><path d="M69.2 82.8C74.5 80.3 85 80.3 90.6 82.8" fill="none" stroke="#2d2024" stroke-width="2.2" stroke-linecap="round"/><path d="M69.8 82.4L66.2 80.2M69.3 84.1L66.4 83.2" fill="none" stroke="#2d2024" stroke-width="1.7" stroke-linecap="round"/>`)}
+      ${both(`<ellipse cx="80" cy="87" rx="9.8" ry="9.5" fill="#5ec93c" stroke="#254423" stroke-width="1.8"/><ellipse cx="80" cy="91" rx="6.8" ry="3.9" fill="#b8f259" opacity=".92"/><ellipse cx="81.2" cy="85.2" rx="4.9" ry="5.2" fill="#22191c"/><circle cx="84.2" cy="83.6" r="2.7" fill="#fff"/><circle cx="77.2" cy="89.8" r="1.4" fill="#fff" opacity=".92"/><path class="d-coat" d="M68 83.2C73 80.5 85 80.4 91.5 83.2V73H68Z"/><path d="M69 82.8C74 79.8 85 79.8 91 82.8C88 76.2 72.5 76.2 69 82.8Z" fill="#3b1f14" opacity=".13"/><path d="M69.2 82.8C74.5 80.3 85 80.3 90.6 82.8" fill="none" stroke="#2d2024" stroke-width="2.2" stroke-linecap="round"/><path d="M69.8 82.4L66.2 80.2M69.3 84.1L66.4 83.2" fill="none" stroke="#2d2024" stroke-width="1.7" stroke-linecap="round"/>`)}
       ${lashes}
     </g>
     ${both(`<ellipse cx="66" cy="101" rx="8" ry="4.5" fill="#ff8ea8" opacity=".42"/>`)}
@@ -177,7 +191,8 @@
       poke(f);
       const b = f.querySelector('.d-bubble');
       if (b) {
-        b.querySelector('span').textContent = (cfg.name ? cfg.name + ' : ' : '') + PHRASES[Math.floor(Math.random() * PHRASES.length)];
+        const pool = window.isNoLove?.() ? PHRASES_PRO : PHRASES;
+        b.querySelector('span').textContent = (cfg.name ? cfg.name + ' : ' : '') + pool[Math.floor(Math.random() * pool.length)];
         b.hidden = false; clearTimeout(poke.t); poke.t = setTimeout(() => { b.hidden = true; }, 4500);
       }
     }
