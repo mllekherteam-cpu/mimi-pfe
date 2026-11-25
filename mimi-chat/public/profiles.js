@@ -13,6 +13,67 @@
     return pool[Math.floor(Math.random() * pool.length)];
   };
 
+  // Unique ID per browser tab so multi-tab presence is accurate
+  const TAB_ID = 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const COOKIE_KEY = 'mimi_profile';
+
+  function readCookieProfile() {
+    try {
+      const m = document.cookie.match(/(?:^|;\s*)mimi_profile=([^;]+)/);
+      if (!m) return null;
+      const p = JSON.parse(decodeURIComponent(m[1]));
+      if (p && p.id && p.role && p.avatar) return p;
+    } catch {}
+    return null;
+  }
+
+  function writeCookieProfile(p) {
+    try {
+      if (!p) return;
+      const val = encodeURIComponent(JSON.stringify({ id: p.id, name: p.name, role: p.role, avatar: p.avatar }));
+      document.cookie = `${COOKIE_KEY}=${val}; max-age=31536000; path=/; SameSite=Lax`;
+    } catch {}
+  }
+
+  function saveProfile(p) {
+    settings.profile = p;
+    LS.set('settings', settings);
+    writeCookieProfile(p);
+  }
+
+  // Auto-restore from cookie if localStorage was cleared, or from ?as=mimi / ?as=omar magic link
+  function initStoredProfile() {
+    try {
+      const params = new URLSearchParams(location.search);
+      const as = (params.get('as') || '').toLowerCase();
+      if (as === 'mimi') {
+        saveProfile({ id: 'mimi', name: 'Mimi', role: 'mimi', avatar: '/avatars/mimi.jpg' });
+        params.delete('as');
+        const q = params.toString();
+        history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+        return;
+      }
+      if (as === 'omar') {
+        saveProfile({ id: 'omar', name: 'Omar', role: 'omar', avatar: '/avatars/omar.jpg' });
+        params.delete('as');
+        const q = params.toString();
+        history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+        return;
+      }
+    } catch {}
+
+    if (settings.profile?.id) {
+      writeCookieProfile(settings.profile); // refresh 1-year cookie
+    } else {
+      const fromCookie = readCookieProfile();
+      if (fromCookie) {
+        settings.profile = fromCookie;
+        LS.set('settings', settings);
+      }
+    }
+  }
+  initStoredProfile();
+
   let presenceList = [
     { id: 'mimi', name: 'Mimi', role: 'mimi', avatar: '/avatars/mimi.jpg', online: false, lastSeen: 0 },
     { id: 'omar', name: 'Omar', role: 'omar', avatar: '/avatars/omar.jpg', online: false, lastSeen: 0 },
@@ -53,7 +114,6 @@
     const bar = $('#presenceBar');
     if (!bar) return;
     const me = getProfile();
-    // Always show Mimi, Omar, any online guests (or myself if guest), plus AI robot
     const shown = [];
     const byId = new Map(presenceList.map((u) => [u.id, u]));
 
@@ -133,7 +193,7 @@
         method: 'POST',
         keepalive: offline,
         headers: { 'Content-Type': 'application/json', 'x-access-code': settings.code || '' },
-        body: JSON.stringify({ id: p.id, name: p.name, role: p.role, avatar: p.avatar, offline }),
+        body: JSON.stringify({ id: p.id, name: p.name, role: p.role, avatar: p.avatar, tabId: TAB_ID, offline }),
       });
       if (!r.ok) return;
       const j = await r.json();
@@ -158,7 +218,7 @@
     hbTimer = setInterval(() => {
       if (document.visibilityState !== 'visible') return;
       if (getProfile()) pingPresence(false); else fetchPresence();
-    }, 25_000);
+    }, 15_000);
   }
 
   // ---------- Netflix-style profile picker ----------
@@ -171,7 +231,7 @@
 
     const bg = modal(`<div data-whomodal>
       <h2 class="who-title">Qui est là ?</h2>
-      <p class="who-sub">${requireCode ? 'Choisis ton profil et entre le code d’accès.' : 'Choisis ton profil pour te connecter.'}</p>
+      <p class="who-sub">${requireCode ? 'Choisis ton profil et entre le code d’accès.' : 'Choisis ton profil une seule fois — le site s’en souviendra.'}</p>
       <div class="who-grid">
         <button type="button" class="who-card ${picked === 'mimi' ? 'sel' : ''}" data-role="mimi">
           <div class="who-pic"><img src="/avatars/mimi.jpg" alt="Mimi"></div>
@@ -220,8 +280,7 @@
       if (prev && prev.id !== next.id) {
         pingPresence(true, prev);
       }
-      settings.profile = next;
-      LS.set('settings', settings);
+      saveProfile(next);
       applyProfileUI();
       if (requireCode) boot();
       else pingPresence(false);
@@ -256,15 +315,15 @@
     if (btn) { e.stopPropagation(); openPop(btn); }
   });
 
-  // Visibility & page leave
+  // Accurate online/offline lifecycle
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       if (getProfile()) pingPresence(false); else fetchPresence();
     }
   });
-  addEventListener('pagehide', () => {
-    if (getProfile()) pingPresence(true);
-  });
+  addEventListener('focus', () => { if (getProfile()) pingPresence(false); else fetchPresence(); });
+  addEventListener('online', () => { if (getProfile()) pingPresence(false); else fetchPresence(); });
+  addEventListener('pagehide', () => { if (getProfile()) pingPresence(true); });
 
   // Expose hooks for index.html
   window.MimiProfiles = {

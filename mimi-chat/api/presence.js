@@ -1,17 +1,19 @@
 // Live online presence for Mimi, Omar, and any guest profiles.
+// Tracks per-tab sessions so closing one tab doesn't mark a user offline if another tab is open,
+// while closing their last tab marks them offline immediately.
 // GET  -> { sync, users: [{ id, name, role, avatar, lastSeen, online }] }
-// POST { id, name, role, avatar, offline? } -> updates caller's presence and returns { sync, users }
+// POST { id, name, role, avatar, tabId?, offline? } -> updates caller's presence and returns { sync, users }
 import { checkAuth, hasStore, redis, readJson } from '../lib/store.js';
 
 const KEY = 'mimi:presence';
-const ONLINE_MS = 75_000;
+const ONLINE_MS = 45_000;
 const GUEST_TTL = 24 * 60 * 60 * 1000;
 const AVATAR_RE = /^\/avatars\/[a-z0-9_-]+\.(jpg|jpeg|png|svg|webp)$/i;
 const mem = globalThis.__mimiPresence || (globalThis.__mimiPresence = {});
 
 const DEFAULTS = {
-  mimi: { id: 'mimi', name: 'Mimi', role: 'mimi', avatar: '/avatars/mimi.jpg', lastSeen: 0, offline: true },
-  omar: { id: 'omar', name: 'Omar', role: 'omar', avatar: '/avatars/omar.jpg', lastSeen: 0, offline: true },
+  mimi: { id: 'mimi', name: 'Mimi', role: 'mimi', avatar: '/avatars/mimi.jpg', lastSeen: 0, tabs: {} },
+  omar: { id: 'omar', name: 'Omar', role: 'omar', avatar: '/avatars/omar.jpg', lastSeen: 0, tabs: {} },
 };
 
 async function loadAll() {
@@ -34,6 +36,16 @@ async function removeOne(id) {
   await redis('HDEL', KEY, id);
 }
 
+function pruneTabs(tabs, now) {
+  const clean = {};
+  if (tabs && typeof tabs === 'object') {
+    for (const [k, ts] of Object.entries(tabs)) {
+      if (typeof ts === 'number' && (now - ts) < ONLINE_MS) clean[k] = ts;
+    }
+  }
+  return clean;
+}
+
 function formatUsers(map) {
   const now = Date.now();
   const merged = { ...DEFAULTS, ...map };
@@ -41,7 +53,9 @@ function formatUsers(map) {
   const users = [];
   for (const [id, raw] of Object.entries(merged)) {
     const u = { ...raw, id };
-    const online = !u.offline && (now - (u.lastSeen || 0)) < ONLINE_MS;
+    const activeTabs = pruneTabs(u.tabs, now);
+    // Support legacy records without tabs map too
+    const online = Object.keys(activeTabs).length > 0 || (!u.tabs && !u.offline && (now - (u.lastSeen || 0)) < ONLINE_MS);
     if (u.role === 'guest' && !online && (now - (u.lastSeen || 0)) > GUEST_TTL) {
       staleGuests.push(id);
       continue;
@@ -78,9 +92,28 @@ export default async function handler(req, res) {
       const defaultAvatar = role === 'mimi' ? '/avatars/mimi.jpg' : role === 'omar' ? '/avatars/omar.jpg' : '/avatars/guest-1.svg';
       const avatar = AVATAR_RE.test(body.avatar || '') ? body.avatar : defaultAvatar;
       const name = role === 'mimi' ? 'Mimi' : role === 'omar' ? 'Omar' : (String(body.name || 'Invité').trim().slice(0, 28) || 'Invité');
-      const rec = { id, name, role, avatar, lastSeen: Date.now(), offline: Boolean(body.offline) };
-      await saveOne(id, rec);
+      const tabId = String(body.tabId || 'default').replace(/[^a-z0-9_-]/gi, '').slice(0, 24) || 'default';
+
+      const now = Date.now();
       const map = await loadAll();
+      const prev = map[id] || DEFAULTS[id] || {};
+      const tabs = pruneTabs(prev.tabs, now);
+
+      if (body.offline) {
+        delete tabs[tabId];
+      } else {
+        tabs[tabId] = now;
+      }
+
+      const rec = {
+        id,
+        name,
+        role,
+        avatar,
+        lastSeen: now,
+        tabs,
+      };
+      await saveOne(id, rec);
       map[id] = rec;
       return res.status(200).json({ sync: hasStore, users: formatUsers(map) });
     }
