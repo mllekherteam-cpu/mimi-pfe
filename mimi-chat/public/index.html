@@ -6,6 +6,8 @@
 <title>Mimi · Assistant PFE</title>
 <meta name="theme-color" content="#fcf7f4">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <style>
@@ -23,6 +25,20 @@ body{font:15px/1.55 var(--font);color:var(--ink);background:radial-gradient(1200
 button,a,select,.conv,.fitem,.ditem,[data-st]{cursor:var(--cursor-hand)!important}
 textarea,input{cursor:text}
 button{font:inherit;color:inherit;border:0;background:none}
+.brand{position:relative}
+.emo{width:30px;height:30px;display:inline-flex;flex:none}
+.emo img{width:30px;height:30px;transition:transform .45s cubic-bezier(.3,1.6,.5,1),opacity .3s}
+.emo img.swap{transform:scale(.2) rotate(-20deg);opacity:0}
+.bwrap{position:relative;display:inline-block;height:28px;overflow:hidden;flex:1}
+#bPlain,#bLove{position:absolute;left:0;top:0;white-space:nowrap;transition:transform .7s cubic-bezier(.65,0,.35,1),opacity .7s}
+#bLove{transform:translateY(110%);opacity:0;display:flex;align-items:baseline;gap:7px}
+.brand.love #bPlain{transform:translateY(-110%);opacity:0}
+.brand.love #bLove{transform:translateY(0);opacity:1}
+.script{font-family:"Great Vibes",cursive;font-size:25px;color:var(--accent);line-height:1;clip-path:inset(-10% 100% -10% 0)}
+.brand.love .script{animation:write 2.4s .5s cubic-bezier(.45,.05,.4,1) forwards}
+@keyframes write{to{clip-path:inset(-10% -5% -10% 0)}}
+#helloName{display:inline-block;transition:opacity .6s,transform .6s}
+#helloName.out{opacity:0;transform:translateY(-8px)}
 #fawn{position:fixed;right:26px;bottom:64px;width:170px;opacity:.16;pointer-events:none;z-index:0}
 #main{z-index:1}
 #fromOmar{position:fixed;right:14px;bottom:8px;font-family:var(--serif);font-style:italic;font-size:12px;color:#c58a98;opacity:.55;z-index:2;transition:opacity .3s;user-select:none}
@@ -211,13 +227,13 @@ select.pill:hover{background-color:#fbefed}
 
 <aside id="side">
   <div class="side-top">
-    <div class="brand">🦌 <b>Mimi</b> · PFE</div>
+    <div class="brand"><span class="emo"><img id="emo" alt="🥰" src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f970/512.webp"></span>
+      <span class="bwrap"><span id="bPlain"><b>Mimi</b> · PFE</span><span id="bLove"><span class="script" id="loveWord">I love you</span> <b>Mimi</b></span></span></div>
     <button class="btn-new" id="newChat"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nouvelle conversation</button>
     <label class="search"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="search" placeholder="Rechercher…"></label>
   </div>
   <div id="convList"></div>
   <div class="side-foot">
-    <div class="budget"><span id="budgetTxt">Budget…</span><div class="bar"><i id="budgetBar" style="width:0"></i></div></div>
     <div class="foot-btns">
       <button class="ghost" id="openDocs"><svg class="icon" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Documents</button>
       <button class="ghost" id="openSettings"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Réglages</button>
@@ -236,7 +252,7 @@ select.pill:hover{background-color:#fbefed}
   <div id="scroll">
     <div id="empty">
       <svg class="fawn-hero" viewBox="0 0 200 190" aria-hidden="true"><use href="#fawnSym"/></svg>
-      <h1 id="hello">Bonjour Mimi 🌸</h1>
+      <h1 id="hello">Bonjour <span id="helloName">Mimi</span> 🌸</h1>
       <p>Ton assistante pour le mémoire : eaux usées, boues, biogaz, rédaction, références.</p>
       <div class="starters" id="starters"></div>
     </div>
@@ -497,7 +513,7 @@ function msgHtml(m, i, isLast) {
   }
   const src = m.sources?.length ? `<div class="sources">${m.sources.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener" title="${esc(s.url)}">${esc(s.title)}</a>`).join('')}</div>` : '';
   const err = m.error ? `<div class="err">${esc(m.error)}</div>` : '';
-  const meta = m.cost != null ? `<span class="meta">${MODEL_NAME[m.model] || ''} · ${fmtUsd(m.cost)}</span>` : '';
+  const meta = m.model ? `<span class="meta">${MODEL_NAME[m.model] || ''}</span>` : '';
   return `<div class="msg ai ${isLast ? 'last' : ''}" data-i="${i}"><div class="body">${md(m.text)}</div>${src}${err}
     <div class="actions"><button data-act="copy" title="Copier">${ICON.copy}</button>${isLast ? `<button data-act="retry" title="Régénérer">${ICON.retry}</button>` : ''}<button data-act="save" title="Enregistrer dans le dossier projet">${ICON.file}</button>${meta}</div></div>`;
 }
@@ -647,7 +663,8 @@ async function run() {
 }
 
 // ---------- budget ----------
-function paintBudget() {
+function paintBudget() { /* credit is hidden from Mimi on purpose */ }
+function _unusedBudget() {
   const left = Math.max(0, cfg.budget - cfg.spent);
   $('#budgetTxt').textContent = `Crédit : ${left.toFixed(2).replace('.', ',')} $ restants sur ${cfg.budget} $`;
   $('#budgetBar').style.width = Math.min(100, (left / cfg.budget) * 100) + '%';
@@ -787,7 +804,7 @@ $('#openSettings').onclick = () => {
     <label>Notes sur mon projet (l’assistante les lit à chaque message : données de stage, consignes de l’encadrante, ce qui est déjà fait…)</label>
     <textarea id="sNotes" placeholder="Ex. : débit moyen de la STEP 2025 = … m³/j ; l’encadrante veut… ; chapitre 2 terminé…">${esc(settings.notes)}</textarea>
     <label>Code d’accès</label><input id="sCode" type="password" value="${esc(settings.code)}">
-    <p style="margin-top:12px">Prix indicatifs : Haiku ≈ 0,001 $ par message · Sonnet ≈ 0,01–0,03 $ · Opus ≈ 0,02–0,06 $. La recherche web ajoute 0,01 $ par recherche. Un PDF joint coûte plus cher (il est relu à chaque message).</p>
+    <p style="margin-top:12px">Haiku répond vite pour les petites questions, Sonnet est le meilleur au quotidien, Opus pour les parties difficiles.</p>
     <div class="row"><button class="ghost" data-cancel>Annuler</button><button class="solid" data-ok>Enregistrer</button></div>`,
   (bg) => { settings.notes = bg.querySelector('#sNotes').value; settings.code = bg.querySelector('#sCode').value; LS.set('settings', settings); toast('Enregistré'); boot(); });
 };
@@ -812,6 +829,31 @@ const STARTERS = [
 ];
 $('#starters').innerHTML = STARTERS.map((s, i) => `<button data-st="${i}"><b>${s[0]}</b><small>${s[1]}</small></button>`).join('');
 $('#starters').onclick = (e) => { const b = e.target.closest('[data-st]'); if (!b) return; input.value = STARTERS[+b.dataset.st][2]; autosize(); input.focus(); input.setSelectionRange(input.value.length, input.value.length); };
+
+// ---------- little love notes (every 2 to 2.5 minutes) ----------
+const every = (fn) => { const go = () => setTimeout(() => { fn(); go(); }, 120000 + Math.random() * 30000); go(); };
+const EMOJI = ['1f970', '1f618', '2764_fe0f', '1f917', '1f60d', '1f495', '1f496'];  // Noto animated: hearts face, kiss, heart, hug, heart eyes, two hearts, sparkling heart
+for (const c of EMOJI) { const i = new Image(); i.src = `https://fonts.gstatic.com/s/e/notoemoji/latest/${c}/512.webp`; }
+let emoI = 0;
+every(() => {
+  const img = $('#emo'); img.classList.add('swap');
+  setTimeout(() => { emoI = (emoI + 1) % EMOJI.length; img.src = `https://fonts.gstatic.com/s/e/notoemoji/latest/${EMOJI[emoI]}/512.webp`; img.classList.remove('swap'); }, 300);
+});
+const LOVE = ['I love you', 'I adore', 'I cherish'];
+let loveI = 0;
+function loveNote() {
+  const b = document.querySelector('.brand'); const w = $('#loveWord');
+  w.textContent = LOVE[loveI]; loveI = (loveI + 1) % LOVE.length;
+  b.classList.remove('love'); void w.offsetWidth; b.classList.add('love');
+  setTimeout(() => b.classList.remove('love'), 11000);
+}
+setTimeout(loveNote, 6000); every(loveNote);
+const NAMES = ['Mimi', 'baby', 'honey', 'darling', 'my love'];
+let nameI = 0;
+every(() => {
+  const n = $('#helloName'); n.classList.add('out');
+  setTimeout(() => { nameI = (nameI + 1) % NAMES.length; n.textContent = NAMES[nameI]; n.classList.remove('out'); }, 600);
+});
 
 // ---------- boot ----------
 async function boot() {

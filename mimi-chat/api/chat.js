@@ -55,7 +55,7 @@ export default async function handler(req, res) {
   const effort = EFFORTS.includes(body.effort) ? body.effort : 'low';
 
   const spent = await getSpent();
-  if (spent >= BUDGET) return res.status(402).json({ error: `Budget épuisé (${spent.toFixed(2)} $ / ${BUDGET} $).` });
+  if (spent >= BUDGET) return res.status(402).json({ error: 'L’assistante fait une petite pause. Préviens Omar 🤍' });
 
   res.writeHead(200, { 'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no' });
   const send = (o) => res.write(JSON.stringify(o) + '\n');
