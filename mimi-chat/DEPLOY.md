@@ -1,7 +1,7 @@
-﻿# Mimi Â· Assistant PFE: put it online (about 10 minutes)
+# Mimi · Assistant PFE: put it online (about 10 minutes)
 
 The whole `Nov 2026` folder is one git repo: Mimi's files + the website (`mimi-chat/`).
-GitHub keeps it private, Vercel hosts the site from it, and the site's "ðŸ“ Projet" panel reads and writes the same repo.
+GitHub keeps it private, Vercel hosts the site from it, and the site's "📁 Projet" panel reads and writes the same repo.
 
 ## 1. GitHub (private repo)
 1. Go to https://github.com/new, name it `mimi-pfe`, select **Private**, and add no README. Then click Create.
@@ -13,7 +13,7 @@ GitHub keeps it private, Vercel hosts the site from it, and the site's "ðŸ“�
    ```
 
 ## 2. Token so the site can read and write the project folder
-https://github.com/settings/personal-access-tokens/new: choose a **Fine-grained** token, set Repository access to **Only `mimi-pfe`**, and set Permissions â†’ **Contents: Read and write**. Copy the token.
+https://github.com/settings/personal-access-tokens/new: choose a **Fine-grained** token, set Repository access to **Only `mimi-pfe`**, and set Permissions → **Contents: Read and write**. Copy the token.
 
 ## 3. Vercel
 1. https://vercel.com/new: import `mimi-pfe`.
@@ -27,11 +27,11 @@ https://github.com/settings/personal-access-tokens/new: choose a **Fine-grained*
    | `GITHUB_TOKEN` | the token from step 2 |
    | `GITHUB_REPO` | `mllekherteam-cpu/mimi-pfe` |
 4. Deploy.
-5. Project â†’ **Storage** â†’ add **Upstash for Redis** (free) and connect it to the project, then **Redeploy**.
+5. Project → **Storage** → add **Upstash for Redis** (free) and connect it to the project, then **Redeploy**.
    This keeps her conversation history on all her devices and makes the $5 counter persistent.
 
 ## Every day
-- `SYNC.ps1` (right-click â†’ Run with PowerShell) gets what Mimi added on the site and sends what you changed here.
+- `SYNC.ps1` (right-click → Run with PowerShell) gets what Mimi added on the site and sends what you changed here.
 - Every `git push` also redeploys the site automatically.
 
 ## Run locally
